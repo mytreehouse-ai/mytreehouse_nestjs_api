@@ -1,0 +1,13 @@
+version: '3.9'
+
+services:
+  prod:
+    container_name: mytreehouse-api
+    image: mytreehouse-api:latest
+    platform: 'linux/amd64'
+    build:
+      context: .
+      args:
+        NODE_ENV: 'development'
+    ports:
+      - 3000:3000
