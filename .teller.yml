@@ -2,4 +2,4 @@ project: kmc_erp_core_app
 providers:
   dotenv:
     env_sync:
-      path: ~/Documents/my_envs/.env.kmc_erp_core_app.development
+      path: ~/Documents/my_envs/.env.mytreehouse_nestjs_api.development
