@@ -16,6 +16,15 @@ export const configSchema = z.object({
     .url({
       message: 'DATABASE_URL must be a valid URL',
     }),
+  DATABASE_HOST: z
+    .string({
+      description: 'Postgres host string',
+      required_error: 'DATABASE_HOST is required',
+      invalid_type_error: 'DATABASE_HOST must be a string',
+    })
+    .min(1, {
+      message: 'DATABASE_HOST must be at least 1 character',
+    }),
   DATABASE_USER: z
     .string({
       description: 'Postgres user',
@@ -34,14 +43,23 @@ export const configSchema = z.object({
     .min(1, {
       message: 'DATABASE_PASS must be at least 1 character',
     }),
-  DATABASE_DB: z
+  DATABASE_NAME: z
     .string({
       description: 'Postgres database',
-      required_error: 'DATABASE_DB is required',
-      invalid_type_error: 'DATABASE_DB must be a string',
+      required_error: 'DATABASE_NAME is required',
+      invalid_type_error: 'DATABASE_NAME must be a string',
     })
     .min(1, {
-      message: 'DATABASE_DB must be at least 1 character',
+      message: 'DATABASE_NAME must be at least 1 character',
+    }),
+  DATABASE_PORT: z
+    .string({
+      description: 'Postgres port',
+      required_error: 'DATABASE_PORT is required',
+      invalid_type_error: 'DATABASE_PORT must be a string',
+    })
+    .min(1, {
+      message: 'DATABASE_PORT must be at least 1 character',
     }),
 });
 
