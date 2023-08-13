@@ -5,10 +5,10 @@ import { PG_CONNECTION } from 'src/constant';
 const dbProvider = {
   provide: PG_CONNECTION,
   useValue: new Pool({
-    user: 'postgres',
-    host: 'test',
-    database: 'somedb',
-    password: 'meh',
+    user: '',
+    host: '',
+    database: '',
+    password: '',
     port: 5432,
   }),
 };
