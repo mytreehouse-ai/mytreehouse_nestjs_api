@@ -5,7 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { configSchema } from './config.schema';
 import { PropertyValuationModule } from './property-valuation/property-valuation.module';
 import { PropertyListingModule } from './property-listing/property-listing.module';
-import { KyselyModule } from 'nestjs-kysely';
+import { KyselyModule } from './db/kysely.module';
 
 @Module({
   imports: [
