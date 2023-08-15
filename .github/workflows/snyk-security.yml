@@ -1,10 +1,12 @@
-name: Example workflow using Snyk with continue on error
+name: Snyk vulnerability scan
 on: push
 jobs:
   security:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
+      - name: Install dependencies
+        run: pnpm install
       - name: Run Snyk to check for vulnerabilities
         uses: snyk/actions/node@master
         continue-on-error: true
