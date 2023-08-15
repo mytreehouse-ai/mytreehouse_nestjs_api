@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectKysely } from 'nestjs-kysely';
-import { DB } from './db/@types';
+import { DB } from './common/@types';
 
 @Injectable()
 export class AppService {

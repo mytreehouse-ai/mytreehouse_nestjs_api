@@ -23,4 +23,4 @@ import { Pool } from 'pg';
     }),
   ],
 })
-export class KyselyModule {}
+export class KyselyPostgresModule {}

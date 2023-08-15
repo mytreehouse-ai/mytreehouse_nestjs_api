@@ -4,6 +4,6 @@ import { PropertyValuationController } from './property-valuation.controller';
 
 @Module({
   providers: [PropertyValuationService],
-  controllers: [PropertyValuationController]
+  controllers: [PropertyValuationController],
 })
 export class PropertyValuationModule {}

@@ -1,7 +1,7 @@
 version: '3.9'
 
 services:
-  prod:
+  mytreehouse-api:
     container_name: mytreehouse-api
     image: mytreehouse-api:latest
     platform: 'linux/amd64'
