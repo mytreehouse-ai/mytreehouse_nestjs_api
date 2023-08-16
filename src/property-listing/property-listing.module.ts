@@ -2,6 +2,6 @@ import { Module } from '@nestjs/common';
 import { PropertyListingController } from './property-listing.controller';
 
 @Module({
-  controllers: [PropertyListingController]
+  controllers: [PropertyListingController],
 })
 export class PropertyListingModule {}
