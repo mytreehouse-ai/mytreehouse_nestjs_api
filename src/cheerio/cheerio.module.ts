@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { CheerioService } from './cheerio.service';
+import { CheerioLamudiService } from './cheerio.lamudi.service';
 import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [ScheduleModule.forRoot()],
-  providers: [CheerioService],
+  providers: [CheerioLamudiService],
 })
 export class CheerioModule {}
