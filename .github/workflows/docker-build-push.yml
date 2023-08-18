@@ -70,7 +70,7 @@ jobs:
       - name: Delete old packages but keep 3 latest
         uses: smartsquaregmbh/delete-old-packages@v0.7.0
         with:
-          organization: kmcwebdev
+          organization: mytreehouse-ai
           # supported types: npm, maven, rubygems, docker, nuget, container
           type: container
           keep: 3
