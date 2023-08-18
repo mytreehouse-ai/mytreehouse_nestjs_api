@@ -15,7 +15,7 @@ import { CheerioModule } from './cheerio/cheerio.module';
       validate: (config) => {
         return configSchema.parse(config);
       },
-      envFilePath: ['.env*', '.env'],
+      envFilePath: ['.env', '.env.*'],
     }),
     KyselyPostgresModule,
     PropertyValuationModule,

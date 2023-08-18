@@ -67,12 +67,41 @@ interface LandMetadata {
   geoPoint?: number[];
 }
 
+function cheerioMeUp<T>(htmlData: string): {
+  href: string;
+  title: string;
+  address: string;
+  metadata: T;
+}[] {
+  if (!htmlData) return;
+
+  const scrapedProperties = [];
+
+  const $ = load(htmlData);
+
+  $('.card').each((_, element) => {
+    const href = $(element).find('.js-listing-link').attr('href');
+    const title = $(element).find('.ListingCell-KeyInfo-title').attr('title');
+    const address = $(element)
+      .find('.ListingCell-KeyInfo-address-text')
+      .text()
+      .trim();
+    const metadata = $(element).find('.ListingCell-AllInfo').data();
+
+    if (!href || !title) return;
+
+    scrapedProperties.push({ href, title, address, metadata });
+  });
+
+  return scrapedProperties;
+}
+
 @Injectable()
 export class CheerioLamudiService {
   private readonly logger = new Logger(CheerioLamudiService.name);
   constructor(@InjectKysely() private readonly db: DB) {}
 
-  @Cron(CronExpression.EVERY_WEEK)
+  @Cron(CronExpression.EVERY_5_SECONDS)
   async condominium() {
     try {
       type TCondominium = LamudiProperty & { metadata: CondominiumMetadata };
@@ -89,11 +118,18 @@ export class CheerioLamudiService {
         .limit(1)
         .execute();
 
-      this.logger.log(
-        'scrape condominium row count: ' + scrapeCondominium.length,
-      );
+      if (!scrapeCondominium.length) {
+        await this.db
+          .deleteFrom('scraper_api_data')
+          .where(
+            'scrape_url',
+            'like',
+            '%https://www.lamudi.com.ph/condominium%',
+          )
+          .execute();
 
-      if (!scrapeCondominium.length) return;
+        return;
+      }
 
       for (const data of scrapeCondominium) {
         await this.db
@@ -105,33 +141,11 @@ export class CheerioLamudiService {
           .where('html_data_id', '=', data.html_data_id)
           .execute();
 
-        const $ = load(data.html_data);
+        const scrapedData = cheerioMeUp<CondominiumMetadata>(data.html_data);
 
-        $('.card').each((_, element) => {
-          const href = $(element).find('.js-listing-link').attr('href');
-          const title = $(element)
-            .find('.ListingCell-KeyInfo-title')
-            .attr('title');
-          const address = $(element)
-            .find('.ListingCell-KeyInfo-address-text')
-            .text()
-            .trim();
-          const metadata = $(element)
-            .find('.ListingCell-AllInfo')
-            .data() as unknown as CondominiumMetadata;
+        const isBuy = data.scrape_url.includes('buy');
 
-          if (!href || !title) return;
-
-          const isBuy = data.scrape_url.includes('buy');
-
-          rows.push({
-            href,
-            title,
-            address,
-            isBuy,
-            metadata,
-          });
-        });
+        scrapedData.map((item) => rows.push({ ...item, isBuy }));
       }
 
       rows.forEach(async (item) => {
@@ -187,7 +201,7 @@ export class CheerioLamudiService {
     }
   }
 
-  @Cron(CronExpression.EVERY_WEEK)
+  @Cron(CronExpression.EVERY_5_SECONDS)
   async house() {
     try {
       type THouse = LamudiProperty & {
@@ -206,9 +220,14 @@ export class CheerioLamudiService {
         .limit(1)
         .execute();
 
-      this.logger.log('scrape house row count: ' + scrapeHouse.length);
+      if (!scrapeHouse.length) {
+        await this.db
+          .deleteFrom('scraper_api_data')
+          .where('scrape_url', 'like', '%https://www.lamudi.com.ph/house%')
+          .execute();
 
-      if (!scrapeHouse.length) return;
+        return;
+      }
 
       for (const data of scrapeHouse) {
         await this.db
@@ -220,33 +239,11 @@ export class CheerioLamudiService {
           .where('html_data_id', '=', data.html_data_id)
           .execute();
 
-        const $ = load(data.html_data);
+        const scrapedData = cheerioMeUp<HouseMetadata>(data.html_data);
 
-        $('.card').each((_, element) => {
-          const href = $(element).find('.js-listing-link').attr('href');
-          const title = $(element)
-            .find('.ListingCell-KeyInfo-title')
-            .attr('title');
-          const address = $(element)
-            .find('.ListingCell-KeyInfo-address-text')
-            .text()
-            .trim();
-          const metadata = $(element)
-            .find('.ListingCell-AllInfo')
-            .data() as unknown as HouseMetadata;
+        const isBuy = data.scrape_url.includes('buy');
 
-          if (!href || !title) return;
-
-          const isBuy = data.scrape_url.includes('buy');
-
-          rows.push({
-            href,
-            title,
-            address,
-            isBuy,
-            metadata,
-          });
-        });
+        scrapedData.map((item) => rows.push({ ...item, isBuy }));
       }
 
       rows.forEach(async (item) => {
@@ -301,7 +298,7 @@ export class CheerioLamudiService {
     }
   }
 
-  @Cron(CronExpression.EVERY_5_SECONDS)
+  @Cron(CronExpression.EVERY_WEEK)
   async apartment() {}
 
   @Cron(CronExpression.EVERY_5_SECONDS)
@@ -323,9 +320,14 @@ export class CheerioLamudiService {
         .limit(1)
         .execute();
 
-      this.logger.log('scrape land row count: ' + scrapeLand.length);
+      if (!scrapeLand.length) {
+        await this.db
+          .deleteFrom('scraper_api_data')
+          .where('scrape_url', 'like', '%https://www.lamudi.com.ph/land%')
+          .execute();
 
-      if (!scrapeLand.length) return;
+        return;
+      }
 
       for (const data of scrapeLand) {
         await this.db
@@ -337,33 +339,11 @@ export class CheerioLamudiService {
           .where('html_data_id', '=', data.html_data_id)
           .execute();
 
-        const $ = load(data.html_data);
+        const scrapedData = cheerioMeUp<LandMetadata>(data.html_data);
 
-        $('.card').each((_, element) => {
-          const href = $(element).find('.js-listing-link').attr('href');
-          const title = $(element)
-            .find('.ListingCell-KeyInfo-title')
-            .attr('title');
-          const address = $(element)
-            .find('.ListingCell-KeyInfo-address-text')
-            .text()
-            .trim();
-          const metadata = $(element)
-            .find('.ListingCell-AllInfo')
-            .data() as unknown as LandMetadata;
+        const isBuy = data.scrape_url.includes('buy');
 
-          if (!href || !title) return;
-
-          const isBuy = data.scrape_url.includes('buy');
-
-          rows.push({
-            href,
-            title,
-            address,
-            isBuy,
-            metadata,
-          });
-        });
+        scrapedData.map((item) => rows.push({ ...item, isBuy }));
       }
 
       rows.forEach(async (item) => {
