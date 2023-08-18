@@ -101,8 +101,8 @@ export class CheerioLamudiService {
   private readonly logger = new Logger(CheerioLamudiService.name);
   constructor(@InjectKysely() private readonly db: DB) {}
 
-  @Cron(CronExpression.EVERY_5_SECONDS)
-  async condominium() {
+  @Cron(CronExpression.EVERY_WEEK)
+  async condominiumWithPaging() {
     try {
       type TCondominium = LamudiProperty & { metadata: CondominiumMetadata };
 
@@ -116,9 +116,9 @@ export class CheerioLamudiService {
         .where('finished_at', 'is', null)
         .orderBy('html_data_id', 'desc')
         .limit(1)
-        .execute();
+        .executeTakeFirst();
 
-      if (!scrapeCondominium.length) {
+      if (!scrapeCondominium) {
         await this.db
           .deleteFrom('scraper_api_data')
           .where(
@@ -131,19 +131,21 @@ export class CheerioLamudiService {
         return;
       }
 
-      for (const data of scrapeCondominium) {
+      if (scrapeCondominium) {
         await this.db
           .updateTable('scraper_api_data')
           .set({
             scrape_finish: true,
             finished_at: new Date(),
           })
-          .where('html_data_id', '=', data.html_data_id)
+          .where('html_data_id', '=', scrapeCondominium.html_data_id)
           .execute();
 
-        const scrapedData = cheerioMeUp<CondominiumMetadata>(data.html_data);
+        const scrapedData = cheerioMeUp<CondominiumMetadata>(
+          scrapeCondominium.html_data,
+        );
 
-        const isBuy = data.scrape_url.includes('buy');
+        const isBuy = scrapeCondominium.scrape_url.includes('buy');
 
         scrapedData.map((item) => rows.push({ ...item, isBuy }));
       }
@@ -201,8 +203,8 @@ export class CheerioLamudiService {
     }
   }
 
-  @Cron(CronExpression.EVERY_5_SECONDS)
-  async house() {
+  @Cron(CronExpression.EVERY_WEEK)
+  async houseWithPaging() {
     try {
       type THouse = LamudiProperty & {
         metadata: HouseMetadata;
@@ -218,9 +220,9 @@ export class CheerioLamudiService {
         .where('finished_at', 'is', null)
         .orderBy('html_data_id', 'desc')
         .limit(1)
-        .execute();
+        .executeTakeFirst();
 
-      if (!scrapeHouse.length) {
+      if (!scrapeHouse) {
         await this.db
           .deleteFrom('scraper_api_data')
           .where('scrape_url', 'like', '%https://www.lamudi.com.ph/house%')
@@ -229,19 +231,19 @@ export class CheerioLamudiService {
         return;
       }
 
-      for (const data of scrapeHouse) {
+      if (scrapeHouse) {
         await this.db
           .updateTable('scraper_api_data')
           .set({
             scrape_finish: true,
             finished_at: new Date(),
           })
-          .where('html_data_id', '=', data.html_data_id)
+          .where('html_data_id', '=', scrapeHouse.html_data_id)
           .execute();
 
-        const scrapedData = cheerioMeUp<HouseMetadata>(data.html_data);
+        const scrapedData = cheerioMeUp<HouseMetadata>(scrapeHouse.html_data);
 
-        const isBuy = data.scrape_url.includes('buy');
+        const isBuy = scrapeHouse.scrape_url.includes('buy');
 
         scrapedData.map((item) => rows.push({ ...item, isBuy }));
       }
@@ -299,10 +301,10 @@ export class CheerioLamudiService {
   }
 
   @Cron(CronExpression.EVERY_WEEK)
-  async apartment() {}
+  async apartmentWithPaging() {}
 
-  @Cron(CronExpression.EVERY_5_SECONDS)
-  async land() {
+  @Cron(CronExpression.EVERY_WEEK)
+  async landWithPaging() {
     try {
       type TLand = LamudiProperty & {
         metadata: LandMetadata;
@@ -318,9 +320,9 @@ export class CheerioLamudiService {
         .where('finished_at', 'is', null)
         .orderBy('html_data_id', 'desc')
         .limit(1)
-        .execute();
+        .executeTakeFirst();
 
-      if (!scrapeLand.length) {
+      if (!scrapeLand) {
         await this.db
           .deleteFrom('scraper_api_data')
           .where('scrape_url', 'like', '%https://www.lamudi.com.ph/land%')
@@ -329,19 +331,19 @@ export class CheerioLamudiService {
         return;
       }
 
-      for (const data of scrapeLand) {
+      if (scrapeLand) {
         await this.db
           .updateTable('scraper_api_data')
           .set({
             scrape_finish: true,
             finished_at: new Date(),
           })
-          .where('html_data_id', '=', data.html_data_id)
+          .where('html_data_id', '=', scrapeLand.html_data_id)
           .execute();
 
-        const scrapedData = cheerioMeUp<LandMetadata>(data.html_data);
+        const scrapedData = cheerioMeUp<LandMetadata>(scrapeLand.html_data);
 
-        const isBuy = data.scrape_url.includes('buy');
+        const isBuy = scrapeLand.scrape_url.includes('buy');
 
         scrapedData.map((item) => rows.push({ ...item, isBuy }));
       }
@@ -390,4 +392,16 @@ export class CheerioLamudiService {
       this.logger.error(error);
     }
   }
+
+  @Cron(CronExpression.EVERY_WEEK)
+  async condominiumSinglePage() {}
+
+  @Cron(CronExpression.EVERY_WEEK)
+  async houseSinglePage() {}
+
+  @Cron(CronExpression.EVERY_WEEK)
+  async apartmentSinglePage() {}
+
+  @Cron(CronExpression.EVERY_WEEK)
+  async landSinglePage() {}
 }

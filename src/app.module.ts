@@ -7,6 +7,8 @@ import { PropertyValuationModule } from './property-valuation/property-valuation
 import { PropertyListingModule } from './property-listing/property-listing.module';
 import { KyselyPostgresModule } from './common/database/kyselyPostgres.module';
 import { CheerioModule } from './cheerio/cheerio.module';
+import { ZodValidationPipe } from 'nestjs-zod';
+import { APP_PIPE } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -23,6 +25,12 @@ import { CheerioModule } from './cheerio/cheerio.module';
     CheerioModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    {
+      provide: APP_PIPE,
+      useClass: ZodValidationPipe,
+    },
+    AppService,
+  ],
 })
 export class AppModule {}
