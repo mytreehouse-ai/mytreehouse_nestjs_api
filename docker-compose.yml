@@ -1,11 +1,15 @@
 version: '3.9'
 
 services:
-  mytreehouse-api:
-    container_name: mytreehouse-api
-    image: mytreehouse-api:latest
+  mytreehouse-nestjs-api:
+    container_name: mytreehouse-nestjs-api
+    image: mytreehouse-nestjs-api:latest
     platform: 'linux/amd64'
     build:
       context: .
+      args:
+        NODE_ENV: 'production'
+        DATABASE_URL: ${DATABASE_URL}
+
     ports:
       - 3000:3000
