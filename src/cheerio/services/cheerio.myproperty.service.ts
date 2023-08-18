@@ -248,11 +248,13 @@ export default class CheerioMyPropertyService {
   @Cron(CronExpression.EVERY_WEEK)
   async landWithPaging() {}
 
-  @Cron(CronExpression.EVERY_WEEK)
+  @Cron(CronExpression.EVERY_5_SECONDS)
   async ScraperApiAsyncJob() {
     try {
       // TODO: Remove this soon when fully deployed
       if (this.configService.get('NODE_ENV') === 'production') {
+        this.logger.log('production mode -> ScraperApiAsyncJob -> paused');
+
         return;
       }
 
@@ -312,11 +314,13 @@ export default class CheerioMyPropertyService {
     }
   }
 
-  @Cron(CronExpression.EVERY_WEEK)
+  @Cron(CronExpression.EVERY_5_SECONDS)
   async condominiumSinglePage() {
     try {
       // TODO: Remove this soon when fully deployed
       if (this.configService.get('NODE_ENV') === 'production') {
+        this.logger.log('production mode -> condominiumSinglePage -> paused');
+
         return;
       }
 
