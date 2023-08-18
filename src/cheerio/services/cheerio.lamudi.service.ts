@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { load } from 'cheerio';
 import { InjectKysely } from 'nestjs-kysely';
@@ -99,11 +100,19 @@ function cheerioMeUp<T>(htmlData: string): {
 @Injectable()
 export class CheerioLamudiService {
   private readonly logger = new Logger(CheerioLamudiService.name);
-  constructor(@InjectKysely() private readonly db: DB) {}
+  constructor(
+    @InjectKysely() private readonly db: DB,
+    private readonly configService: ConfigService,
+  ) {}
 
   @Cron(CronExpression.EVERY_WEEK)
   async condominiumWithPaging() {
     try {
+      // TODO: Remove this soon when fully deployed
+      if (this.configService.get('NODE_ENV') === 'production') {
+        return;
+      }
+
       type TCondominium = LamudiProperty & { metadata: CondominiumMetadata };
 
       const rows: TCondominium[] = [];
@@ -206,6 +215,11 @@ export class CheerioLamudiService {
   @Cron(CronExpression.EVERY_WEEK)
   async houseWithPaging() {
     try {
+      // TODO: Remove this soon when fully deployed
+      if (this.configService.get('NODE_ENV') === 'production') {
+        return;
+      }
+
       type THouse = LamudiProperty & {
         metadata: HouseMetadata;
       };
@@ -306,6 +320,11 @@ export class CheerioLamudiService {
   @Cron(CronExpression.EVERY_WEEK)
   async landWithPaging() {
     try {
+      // TODO: Remove this soon when fully deployed
+      if (this.configService.get('NODE_ENV') === 'production') {
+        return;
+      }
+
       type TLand = LamudiProperty & {
         metadata: LandMetadata;
       };
