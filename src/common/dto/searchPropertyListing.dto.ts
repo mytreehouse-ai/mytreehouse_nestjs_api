@@ -27,6 +27,14 @@ const SearchPropertyListingSchema = z
       .uuid({
         message: 'Turnover status id must be a valid uuid',
       }),
+    has_images: z.preprocess(
+      (val) => (val === 'true' ? true : false),
+      z
+        .boolean({
+          description: 'Has images',
+        })
+        .default(false),
+    ),
     bedroom_count: z.preprocess(
       (val) => Number(val),
       z
