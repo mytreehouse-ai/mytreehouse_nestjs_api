@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { load } from 'cheerio';
 import { InjectKysely } from 'nestjs-kysely';
@@ -111,7 +112,10 @@ const scraperApi = async (url: string, singlePage?: 'yes' | 'no') => {
 @Injectable()
 export default class CheerioMyPropertyService {
   private readonly logger = new Logger(CheerioMyPropertyService.name);
-  constructor(@InjectKysely() private readonly db: DB) {}
+  constructor(
+    @InjectKysely() private readonly db: DB,
+    private readonly configService: ConfigService,
+  ) {}
 
   @Cron(CronExpression.EVERY_WEEK)
   async condominiumWithPaging() {
@@ -247,6 +251,11 @@ export default class CheerioMyPropertyService {
   @Cron(CronExpression.EVERY_WEEK)
   async ScraperApiAsyncJob() {
     try {
+      // TODO: Remove this soon when fully deployed
+      if (this.configService.get('NODE_ENV') === 'production') {
+        return;
+      }
+
       const transactionsNgMamaMo = await this.db
         .transaction()
         .execute(async (trx) => {
@@ -306,6 +315,11 @@ export default class CheerioMyPropertyService {
   @Cron(CronExpression.EVERY_WEEK)
   async condominiumSinglePage() {
     try {
+      // TODO: Remove this soon when fully deployed
+      if (this.configService.get('NODE_ENV') === 'production') {
+        return;
+      }
+
       const scrapedData = await this.db
         .selectFrom('scraper_api_data')
         .select(['html_data_id', 'html_data', 'scrape_url'])
