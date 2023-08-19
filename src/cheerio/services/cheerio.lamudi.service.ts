@@ -109,7 +109,7 @@ export class CheerioLamudiService {
   async condominiumWithPaging() {
     try {
       // TODO: Remove this soon when fully deployed
-      if (this.configService.get('NODE_ENV') === 'production') {
+      if (this.configService.get('ALLOW_SCRAPING') === '1') {
         return;
       }
 
@@ -216,7 +216,7 @@ export class CheerioLamudiService {
   async houseWithPaging() {
     try {
       // TODO: Remove this soon when fully deployed
-      if (this.configService.get('NODE_ENV') === 'production') {
+      if (this.configService.get('ALLOW_SCRAPING') === '1') {
         return;
       }
 
@@ -321,7 +321,7 @@ export class CheerioLamudiService {
   async landWithPaging() {
     try {
       // TODO: Remove this soon when fully deployed
-      if (this.configService.get('NODE_ENV') === 'production') {
+      if (this.configService.get('ALLOW_SCRAPING') === '1') {
         return;
       }
 
