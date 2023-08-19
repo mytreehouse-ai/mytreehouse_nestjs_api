@@ -159,7 +159,7 @@ export class PropertyListingService {
 
     query = query.orderBy('properties.created_at', 'desc');
 
-    return query.limit(queryParams?.page_limit || 10).execute();
+    return query.limit(queryParams?.page_limit || 25).execute();
   }
 
   async getOnePropertyListing(propertyId: string) {
