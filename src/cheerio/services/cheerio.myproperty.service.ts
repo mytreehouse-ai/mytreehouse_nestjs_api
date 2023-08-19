@@ -252,7 +252,7 @@ export default class CheerioMyPropertyService {
   async ScraperApiAsyncJob() {
     try {
       // TODO: Remove this soon when fully deployed
-      if (this.configService.get('ALLOW_SCRAPING') === '1') {
+      if (this.configService.get('ALLOW_SCRAPING') === '0') {
         this.logger.log('production mode -> ScraperApiAsyncJob -> paused');
 
         return;
@@ -318,7 +318,7 @@ export default class CheerioMyPropertyService {
   async condominiumSinglePage() {
     try {
       // TODO: Remove this soon when fully deployed
-      if (this.configService.get('ALLOW_SCRAPING') === '1') {
+      if (this.configService.get('ALLOW_SCRAPING') === '0') {
         this.logger.log('production mode -> condominiumSinglePage -> paused');
 
         return;
