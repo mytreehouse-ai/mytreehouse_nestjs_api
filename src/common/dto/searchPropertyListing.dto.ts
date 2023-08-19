@@ -143,6 +143,20 @@ const SearchPropertyListingSchema = z
           message: 'Maximum price must be a positive number',
         }),
     ),
+    page_limit: z.preprocess(
+      (val) => Number(val),
+      z
+        .number({
+          description: 'Page limit',
+          invalid_type_error: 'Page limit must be a number',
+        })
+        .min(1, {
+          message: 'Page limit must be greater than or equal to 1',
+        })
+        .max(100, {
+          message: 'Page limit must be less than or equal to 100',
+        }),
+    ),
   })
   .partial()
   .refine(

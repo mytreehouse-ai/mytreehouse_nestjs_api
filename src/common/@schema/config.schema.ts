@@ -7,6 +7,16 @@ export const configSchema = z.object({
     invalid_type_error:
       'NODE_ENV must be one of "development", "staging", or "production"',
   }),
+  THROTTLE_TTL: z.string({
+    description: 'Throttle TTL',
+    required_error: 'THROTTLE_TTL is required',
+    invalid_type_error: 'THROTTLE_TTL must be a string',
+  }),
+  THROTTLE_LIMIT: z.string({
+    description: 'Throttle limit',
+    required_error: 'THROTTLE_LIMIT is required',
+    invalid_type_error: 'THROTTLE_LIMIT must be a string',
+  }),
   DATABASE_URL: z
     .string({
       description: 'Postgres connection string',

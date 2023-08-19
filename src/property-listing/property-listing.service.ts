@@ -7,8 +7,8 @@ import { SearchPropertyListingType } from 'src/common/dto/searchPropertyListing.
 export class PropertyListingService {
   constructor(@InjectKysely() private readonly db: DB) {}
 
-  async searchPropertyListings(queryParams: SearchPropertyListingType) {
-    let query = this.db
+  private searchPropertyListingQueryBuilder() {
+    return this.db
       .selectFrom('properties')
       .innerJoin(
         'property_types',
@@ -55,8 +55,11 @@ export class PropertyListingService {
         'properties.latitude',
         'properties.lease_end',
         'properties.created_at',
-      ])
-      .limit(5);
+      ]);
+  }
+
+  async searchPropertyListings(queryParams: SearchPropertyListingType) {
+    let query = this.searchPropertyListingQueryBuilder();
 
     if (queryParams?.property_type) {
       query = query.where(
@@ -156,7 +159,17 @@ export class PropertyListingService {
         );
     }
 
-    return query.execute();
+    query = query.orderBy('properties.created_at', 'desc');
+
+    return query.limit(queryParams?.page_limit || 10).execute();
+  }
+
+  async getOnePropertyListing(propertyId: string) {
+    const query = this.searchPropertyListingQueryBuilder();
+
+    return await query
+      .where('properties.property_id', '=', propertyId)
+      .executeTakeFirst();
   }
 
   async getPropertyTypes() {
@@ -173,5 +186,10 @@ export class PropertyListingService {
       .execute();
   }
 
-  async getTurnoverStatus() {}
+  async getTurnoverStatus() {
+    return await this.db
+      .selectFrom('turnover_status')
+      .select(['turnover_status_id', 'name'])
+      .execute();
+  }
 }
