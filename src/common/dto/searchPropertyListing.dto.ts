@@ -27,6 +27,14 @@ const SearchPropertyListingSchema = z
       .uuid({
         message: 'Turnover status id must be a valid uuid',
       }),
+    has_images: z.preprocess(
+      (val) => (val === 'true' ? true : false),
+      z
+        .boolean({
+          description: 'Has images',
+        })
+        .default(false),
+    ),
     bedroom_count: z.preprocess(
       (val) => Number(val),
       z
@@ -133,6 +141,20 @@ const SearchPropertyListingSchema = z
         .int()
         .positive({
           message: 'Maximum price must be a positive number',
+        }),
+    ),
+    page_limit: z.preprocess(
+      (val) => Number(val),
+      z
+        .number({
+          description: 'Page limit',
+          invalid_type_error: 'Page limit must be a number',
+        })
+        .min(1, {
+          message: 'Page limit must be greater than or equal to 1',
+        })
+        .max(100, {
+          message: 'Page limit must be less than or equal to 100',
         }),
     ),
   })
