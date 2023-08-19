@@ -2,6 +2,7 @@ import { Controller, Get, Param, Query } from '@nestjs/common';
 import { PropertyListingService } from './property-listing.service';
 import { SearchPropertyListingDTO } from 'src/common/dto/searchPropertyListing.dto';
 import { GetOnePropertyListingDTO } from 'src/common/dto/getOnePropertyListing.dto';
+import { GetPropertyCityListingDTO } from 'src/common/dto/getPropertyCityListing.dto';
 
 @Controller('property-listing')
 export class PropertyListingController {
@@ -34,5 +35,10 @@ export class PropertyListingController {
   @Get('turnover-status')
   getTurnoverStatus() {
     return this.propertyListingService.getTurnoverStatus();
+  }
+
+  @Get('cities')
+  getCities(@Query() queryParams: GetPropertyCityListingDTO) {
+    return this.propertyListingService.getCities(queryParams.city);
   }
 }
