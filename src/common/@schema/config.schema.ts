@@ -71,6 +71,11 @@ export const configSchema = z.object({
     .min(1, {
       message: 'DATABASE_PORT must be at least 1 character',
     }),
+  ALLOW_SCRAPING: z.enum(['1', '0'], {
+    description: 'Allow scraping',
+    required_error: 'ALLOW_SCRAPING is required',
+    invalid_type_error: 'ALLOW_SCRAPING must be one of "1" or "0"',
+  }),
 });
 
 export type Config = z.infer<typeof configSchema>;

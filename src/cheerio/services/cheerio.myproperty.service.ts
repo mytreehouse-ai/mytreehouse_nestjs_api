@@ -252,7 +252,7 @@ export default class CheerioMyPropertyService {
   async ScraperApiAsyncJob() {
     try {
       // TODO: Remove this soon when fully deployed
-      if (this.configService.get('NODE_ENV') === 'production' || true) {
+      if (this.configService.get('ALLOW_SCRAPING') === '1') {
         this.logger.log('production mode -> ScraperApiAsyncJob -> paused');
 
         return;
@@ -272,7 +272,7 @@ export default class CheerioMyPropertyService {
             )
             .where('scraper_api_async_job_id', 'is', null)
             .where('scraper_api_last_run_date', 'is', null)
-            .limit(5)
+            .limit(1)
             .execute();
 
           if (scrapeCondominium.length) {
@@ -318,7 +318,7 @@ export default class CheerioMyPropertyService {
   async condominiumSinglePage() {
     try {
       // TODO: Remove this soon when fully deployed
-      if (this.configService.get('NODE_ENV') === 'production' || true) {
+      if (this.configService.get('ALLOW_SCRAPING') === '1') {
         this.logger.log('production mode -> condominiumSinglePage -> paused');
 
         return;
@@ -330,7 +330,7 @@ export default class CheerioMyPropertyService {
         .where('single_page', '=', true)
         .where('scrape_finish', 'is', false)
         .orderBy('html_data_id', 'desc')
-        .limit(10)
+        .limit(1)
         .execute();
 
       this.logger.log(
