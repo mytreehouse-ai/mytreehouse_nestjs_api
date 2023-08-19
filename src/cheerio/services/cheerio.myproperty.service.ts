@@ -117,7 +117,7 @@ export default class CheerioMyPropertyService {
     private readonly configService: ConfigService,
   ) {}
 
-  @Cron(CronExpression.EVERY_WEEK)
+  @Cron(CronExpression.EVERY_5_SECONDS)
   async condominiumWithPaging() {
     try {
       type TCondominium = MyProperty & {
@@ -252,7 +252,7 @@ export default class CheerioMyPropertyService {
   async ScraperApiAsyncJob() {
     try {
       // TODO: Remove this soon when fully deployed
-      if (this.configService.get('NODE_ENV') === 'production') {
+      if (this.configService.get('NODE_ENV') === 'production' || true) {
         this.logger.log('production mode -> ScraperApiAsyncJob -> paused');
 
         return;
@@ -318,7 +318,7 @@ export default class CheerioMyPropertyService {
   async condominiumSinglePage() {
     try {
       // TODO: Remove this soon when fully deployed
-      if (this.configService.get('NODE_ENV') === 'production') {
+      if (this.configService.get('NODE_ENV') === 'production' || true) {
         this.logger.log('production mode -> condominiumSinglePage -> paused');
 
         return;

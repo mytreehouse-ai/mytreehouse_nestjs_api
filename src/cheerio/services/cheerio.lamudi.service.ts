@@ -105,7 +105,7 @@ export class CheerioLamudiService {
     private readonly configService: ConfigService,
   ) {}
 
-  @Cron(CronExpression.EVERY_WEEK)
+  @Cron(CronExpression.EVERY_5_SECONDS)
   async condominiumWithPaging() {
     try {
       // TODO: Remove this soon when fully deployed
@@ -212,7 +212,7 @@ export class CheerioLamudiService {
     }
   }
 
-  @Cron(CronExpression.EVERY_WEEK)
+  @Cron(CronExpression.EVERY_5_SECONDS)
   async houseWithPaging() {
     try {
       // TODO: Remove this soon when fully deployed
@@ -317,7 +317,7 @@ export class CheerioLamudiService {
   @Cron(CronExpression.EVERY_WEEK)
   async apartmentWithPaging() {}
 
-  @Cron(CronExpression.EVERY_WEEK)
+  @Cron(CronExpression.EVERY_5_SECONDS)
   async landWithPaging() {
     try {
       // TODO: Remove this soon when fully deployed
