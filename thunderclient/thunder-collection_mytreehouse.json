@@ -1,7 +1,7 @@
 {
     "client": "Thunder Client",
     "collectionName": "mytreehouse",
-    "dateExported": "2023-08-19T04:43:53.356Z",
+    "dateExported": "2023-08-19T10:56:53.720Z",
     "version": "1.1",
     "folders": [
         {
@@ -83,11 +83,11 @@
             "colId": "cbca74d2-3d69-4236-8ff4-fd31c0c8ddaa",
             "containerId": "64225fd6-1532-41b0-b881-24910dba566d",
             "name": "Search",
-            "url": "{{dev_base_url}}/api/property-listing/search?property_type=0944fceb-6e81-41d7-8d45-18fa5d33d754",
+            "url": "{{prod_base_url}}/api/property-listing/search?property_type=0944fceb-6e81-41d7-8d45-18fa5d33d754",
             "method": "GET",
             "sortNum": 20000,
             "created": "2023-07-22T07:07:55.226Z",
-            "modified": "2023-08-19T04:43:47.416Z",
+            "modified": "2023-08-19T06:09:53.695Z",
             "headers": [
                 {
                     "name": "x-api-version",
@@ -186,11 +186,11 @@
             "colId": "cbca74d2-3d69-4236-8ff4-fd31c0c8ddaa",
             "containerId": "64225fd6-1532-41b0-b881-24910dba566d",
             "name": "Get one",
-            "url": "{{dev_base_url}}/api/property-listing/search/4dac2c6e-7625-41b1-994d-261b2e8f1e94",
+            "url": "{{prod_base_url}}/api/property-listing/search/8907240a-92a7-47e9-86c6-ecbdd83ccc93",
             "method": "GET",
             "sortNum": 30000,
             "created": "2023-07-22T07:08:00.048Z",
-            "modified": "2023-08-19T02:25:04.423Z",
+            "modified": "2023-08-19T05:16:11.354Z",
             "headers": [],
             "params": [],
             "tests": []
@@ -235,6 +235,27 @@
             "modified": "2023-08-19T02:27:05.364Z",
             "headers": [],
             "params": [],
+            "tests": []
+        },
+        {
+            "_id": "dbb8ab30-79e0-4e71-b029-899eddaec325",
+            "colId": "cbca74d2-3d69-4236-8ff4-fd31c0c8ddaa",
+            "containerId": "64225fd6-1532-41b0-b881-24910dba566d",
+            "name": "Listing cities",
+            "url": "{{dev_base_url}}/api/property-listing/cities",
+            "method": "GET",
+            "sortNum": 70000,
+            "created": "2023-08-19T10:43:50.014Z",
+            "modified": "2023-08-19T10:56:19.469Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "city",
+                    "value": "maka",
+                    "isDisabled": true,
+                    "isPath": false
+                }
+            ],
             "tests": []
         }
     ],
