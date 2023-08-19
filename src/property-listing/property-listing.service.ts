@@ -190,4 +190,14 @@ export class PropertyListingService {
       .select(['turnover_status_id', 'name'])
       .execute();
   }
+
+  async getCities(city: string) {
+    let query = this.db.selectFrom('cities').select(['city_id', 'name']);
+
+    if (city) {
+      query = query.where('cities.name', 'ilike', '%' + city + '%');
+    }
+
+    return await query.orderBy('cities.name', 'asc').limit(25).execute();
+  }
 }
