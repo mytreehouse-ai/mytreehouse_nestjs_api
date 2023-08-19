@@ -272,7 +272,7 @@ export default class CheerioMyPropertyService {
             )
             .where('scraper_api_async_job_id', 'is', null)
             .where('scraper_api_last_run_date', 'is', null)
-            .limit(1)
+            .limit(5)
             .execute();
 
           if (scrapeCondominium.length) {
@@ -330,7 +330,7 @@ export default class CheerioMyPropertyService {
         .where('single_page', '=', true)
         .where('scrape_finish', 'is', false)
         .orderBy('html_data_id', 'desc')
-        .limit(1)
+        .limit(5)
         .execute();
 
       this.logger.log(
