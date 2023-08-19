@@ -85,9 +85,7 @@ export class PropertyListingService {
       );
     }
 
-    if (queryParams?.has_images) {
-      query = query.where('properties.images', 'is not', null);
-    }
+    query = query.where('properties.images', 'is not', null);
 
     if (queryParams?.bedroom_count) {
       query = query.where('properties.bedroom', '=', queryParams.bedroom_count);

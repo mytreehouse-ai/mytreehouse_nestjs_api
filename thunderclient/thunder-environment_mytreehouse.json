@@ -1,0 +1,16 @@
+{
+    "client": "Thunder Client",
+    "environmentName": "mytreehouse",
+    "dateExported": "2023-08-19T03:12:27.686Z",
+    "version": "1.0",
+    "variables": [
+        {
+            "name": "dev_base_url",
+            "value": "http://localhost:3000"
+        },
+        {
+            "name": "prod_base_url",
+            "value": "https://mytreehouse.kmcc-app.cc"
+        }
+    ]
+}
