@@ -1,0 +1,250 @@
+{
+    "client": "Thunder Client",
+    "collectionName": "mytreehouse",
+    "dateExported": "2023-08-19T03:10:07.108Z",
+    "version": "1.1",
+    "folders": [
+        {
+            "_id": "6832d284-8a97-443c-ae29-5192269c4770",
+            "name": "valuation",
+            "containerId": "",
+            "created": "2023-07-22T07:05:43.185Z",
+            "sortNum": 10000
+        },
+        {
+            "_id": "64225fd6-1532-41b0-b881-24910dba566d",
+            "name": "listings",
+            "containerId": "",
+            "created": "2023-07-22T07:05:48.167Z",
+            "sortNum": 20000
+        }
+    ],
+    "requests": [
+        {
+            "_id": "71e70162-7dbb-45cb-a090-199f7957ffff",
+            "colId": "cbca74d2-3d69-4236-8ff4-fd31c0c8ddaa",
+            "containerId": "6832d284-8a97-443c-ae29-5192269c4770",
+            "name": "Condominium",
+            "url": "{{dev_base_url}}/api/property-valuations/condominium?city_id=209&year_built=2023&turnover_status_id=1&floor_area=67",
+            "method": "GET",
+            "sortNum": 10000,
+            "created": "2023-07-22T07:06:03.563Z",
+            "modified": "2023-08-09T00:31:38.239Z",
+            "headers": [
+                {
+                    "name": "x-api-version",
+                    "value": "1"
+                }
+            ],
+            "params": [
+                {
+                    "name": "city_id",
+                    "value": "209",
+                    "isPath": false
+                },
+                {
+                    "name": "year_built",
+                    "value": "2023",
+                    "isPath": false
+                },
+                {
+                    "name": "turnover_status_id",
+                    "value": "1",
+                    "isPath": false
+                },
+                {
+                    "name": "floor_area",
+                    "value": "67",
+                    "isPath": false
+                },
+                {
+                    "name": "bedroom",
+                    "value": "1",
+                    "isDisabled": true,
+                    "isPath": false
+                },
+                {
+                    "name": "bathroom",
+                    "value": "1",
+                    "isDisabled": true,
+                    "isPath": false
+                },
+                {
+                    "name": "is_cbd",
+                    "value": "true",
+                    "isDisabled": true,
+                    "isPath": false
+                }
+            ],
+            "tests": []
+        },
+        {
+            "_id": "97f92168-009e-4159-b4bd-cf83413ae962",
+            "colId": "cbca74d2-3d69-4236-8ff4-fd31c0c8ddaa",
+            "containerId": "64225fd6-1532-41b0-b881-24910dba566d",
+            "name": "Search",
+            "url": "{{dev_base_url}}/api/property-listing/search?property_type=0944fceb-6e81-41d7-8d45-18fa5d33d754",
+            "method": "GET",
+            "sortNum": 20000,
+            "created": "2023-07-22T07:07:55.226Z",
+            "modified": "2023-08-19T02:04:20.640Z",
+            "headers": [
+                {
+                    "name": "x-api-version",
+                    "value": "1"
+                }
+            ],
+            "params": [
+                {
+                    "name": "property_type",
+                    "value": "0944fceb-6e81-41d7-8d45-18fa5d33d754",
+                    "isPath": false
+                },
+                {
+                    "name": "listing_type",
+                    "value": "6af21b8c-3022-41fa-86dc-3730d8bf0d4f",
+                    "isDisabled": true,
+                    "isPath": false
+                },
+                {
+                    "name": "turnover_status",
+                    "value": "",
+                    "isDisabled": true,
+                    "isPath": false
+                },
+                {
+                    "name": "has_images",
+                    "value": "true",
+                    "isDisabled": true,
+                    "isPath": false
+                },
+                {
+                    "name": "bedroom_count",
+                    "value": "0",
+                    "isDisabled": true,
+                    "isPath": false
+                },
+                {
+                    "name": "bathroom_count",
+                    "value": "1",
+                    "isDisabled": true,
+                    "isPath": false
+                },
+                {
+                    "name": "studio_type",
+                    "value": "false",
+                    "isDisabled": true,
+                    "isPath": false
+                },
+                {
+                    "name": "is_cbd",
+                    "value": "true",
+                    "isDisabled": true,
+                    "isPath": false
+                },
+                {
+                    "name": "city",
+                    "value": "9574d79e-f8bd-4d07-b19a-00d3a5b96202",
+                    "isDisabled": true,
+                    "isPath": false
+                },
+                {
+                    "name": "sqm",
+                    "value": "120",
+                    "isDisabled": true,
+                    "isPath": false
+                },
+                {
+                    "name": "sqm_min",
+                    "value": "60",
+                    "isDisabled": true,
+                    "isPath": false
+                },
+                {
+                    "name": "sqm_max",
+                    "value": "120",
+                    "isDisabled": true,
+                    "isPath": false
+                },
+                {
+                    "name": "min_price",
+                    "value": "250000",
+                    "isDisabled": true,
+                    "isPath": false
+                },
+                {
+                    "name": "max_price",
+                    "value": "250000",
+                    "isDisabled": true,
+                    "isPath": false
+                },
+                {
+                    "name": "page_limit",
+                    "value": "10",
+                    "isDisabled": true,
+                    "isPath": false
+                }
+            ],
+            "tests": []
+        },
+        {
+            "_id": "8e393009-1513-4b1d-a329-bba8c95a3147",
+            "colId": "cbca74d2-3d69-4236-8ff4-fd31c0c8ddaa",
+            "containerId": "64225fd6-1532-41b0-b881-24910dba566d",
+            "name": "Get one",
+            "url": "{{dev_base_url}}/api/property-listing/search/4dac2c6e-7625-41b1-994d-261b2e8f1e94",
+            "method": "GET",
+            "sortNum": 30000,
+            "created": "2023-07-22T07:08:00.048Z",
+            "modified": "2023-08-19T02:25:04.423Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "7200fa08-60be-4794-a42c-2220fe87f400",
+            "colId": "cbca74d2-3d69-4236-8ff4-fd31c0c8ddaa",
+            "containerId": "64225fd6-1532-41b0-b881-24910dba566d",
+            "name": "Property types",
+            "url": "{{dev_base_url}}/api/property-listing/property-types",
+            "method": "GET",
+            "sortNum": 40000,
+            "created": "2023-08-18T13:07:06.764Z",
+            "modified": "2023-08-18T13:07:19.626Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "683f7e15-6763-494c-b1ec-0f0043476560",
+            "colId": "cbca74d2-3d69-4236-8ff4-fd31c0c8ddaa",
+            "containerId": "64225fd6-1532-41b0-b881-24910dba566d",
+            "name": "Listing types",
+            "url": "{{dev_base_url}}/api/property-listing/listing-types",
+            "method": "GET",
+            "sortNum": 50000,
+            "created": "2023-08-18T13:21:06.182Z",
+            "modified": "2023-08-19T02:27:13.463Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "97109bbd-3fa0-474d-a74e-d0aa7fad105d",
+            "colId": "cbca74d2-3d69-4236-8ff4-fd31c0c8ddaa",
+            "containerId": "64225fd6-1532-41b0-b881-24910dba566d",
+            "name": "Turnover status",
+            "url": "{{dev_base_url}}/api/property-listing/turnover-status",
+            "method": "GET",
+            "sortNum": 60000,
+            "created": "2023-08-19T02:26:18.000Z",
+            "modified": "2023-08-19T02:27:05.364Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        }
+    ],
+    "settings": {
+        "envId": "4a4aa711-d442-495e-ae20-cfbfe4b797eb"
+    }
+}
