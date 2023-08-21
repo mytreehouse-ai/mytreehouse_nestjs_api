@@ -10,17 +10,9 @@ export class PropertyValuationService {
   constructor(@InjectKysely() private readonly db: DB) {}
 
   async condominium(data: CondominiumPropertyValuationType) {
-    const {
-      property_type,
-      listing_type,
-      city,
-      floor_area,
-      year_built,
-      enable_initial_price,
-    } = data;
+    const { property_type, listing_type, city, floor_area, year_built } = data;
 
     const CONDOMINIUM_LIFE_SPAN_IN_YEARS = 50;
-    const INITIAL_PRICE_FOR_SALE = '2_000_000.00';
     const SOLD_TRANSACTION_ID = '3f49fd58-4060-4cda-bd95-67f612effa9c';
     const CLOSED_TRANSACTION_ID = 'badda289-30a8-4877-a72b-5cb142bf3b96';
 
@@ -41,17 +33,9 @@ export class PropertyValuationService {
         .where('properties.listing_type_id', '=', listing_type)
         .where('properties.city_id', '=', city);
 
-      if (enable_initial_price) {
-        closedTransactionAverage = closedTransactionAverage.where(
-          'properties.current_price',
-          '>=',
-          INITIAL_PRICE_FOR_SALE,
-        );
-      } else {
-        closedTransactionAverage = closedTransactionAverage.where(
-          sql`properties.current_price is distinct from 'NaN'::numeric`,
-        );
-      }
+      closedTransactionAverage = closedTransactionAverage.where(
+        sql`properties.current_price is distinct from 'NaN'::numeric`,
+      );
 
       closedTransactionAverage = closedTransactionAverage.where(
         sql`properties.floor_area between ${floor_area} * 0.8 and ${floor_area} * 1.2`,
@@ -72,17 +56,9 @@ export class PropertyValuationService {
         .where('properties.listing_type_id', '=', listing_type)
         .where('properties.city_id', '=', city);
 
-      if (enable_initial_price) {
-        scrapedTransactionAverage = scrapedTransactionAverage.where(
-          'properties.current_price',
-          '>=',
-          INITIAL_PRICE_FOR_SALE,
-        );
-      } else {
-        scrapedTransactionAverage = scrapedTransactionAverage.where(
-          sql`properties.current_price is distinct from 'NaN'::numeric`,
-        );
-      }
+      scrapedTransactionAverage = scrapedTransactionAverage.where(
+        sql`properties.current_price is distinct from 'NaN'::numeric`,
+      );
 
       scrapedTransactionAverage = scrapedTransactionAverage.where(
         sql`properties.floor_area between ${floor_area} * 0.8 and ${floor_area} * 1.2`,
