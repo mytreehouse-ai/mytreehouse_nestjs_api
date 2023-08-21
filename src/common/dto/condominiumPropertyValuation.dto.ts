@@ -30,14 +30,14 @@ const CondominiumPropertyValuationSchema = z
       .uuid({
         message: 'City must be a valid UUID.',
       }),
-    floor_area: z
+    sqm: z
       .number({
-        description: 'The floor area of the condominium.',
-        required_error: 'Floor area is required.',
-        invalid_type_error: 'Floor area must be a number.',
+        description: 'The sqm of the condominium.',
+        required_error: 'Sqm is required.',
+        invalid_type_error: 'Sqm must be a number.',
       })
       .min(1, {
-        message: 'Floor area must be greater than 0.',
+        message: 'Sqm must be greater than 0.',
       }),
     year_built: z
       .number({

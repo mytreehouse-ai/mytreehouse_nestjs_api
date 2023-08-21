@@ -10,7 +10,7 @@ export class PropertyValuationService {
   constructor(@InjectKysely() private readonly db: DB) {}
 
   async condominium(data: CondominiumPropertyValuationType) {
-    const { property_type, listing_type, city, floor_area, year_built } = data;
+    const { property_type, listing_type, city, sqm, year_built } = data;
 
     const CONDOMINIUM_LIFE_SPAN_IN_YEARS = 50;
     const SOLD_TRANSACTION_ID = '3f49fd58-4060-4cda-bd95-67f612effa9c';
@@ -38,7 +38,7 @@ export class PropertyValuationService {
       );
 
       closedTransactionAverage = closedTransactionAverage.where(
-        sql`properties.floor_area between ${floor_area} * 0.8 and ${floor_area} * 1.2`,
+        sql`properties.floor_area between ${sqm} * 0.8 and ${sqm} * 1.2`,
       );
 
       let scrapedTransactionAverage = trx
@@ -61,7 +61,7 @@ export class PropertyValuationService {
       );
 
       scrapedTransactionAverage = scrapedTransactionAverage.where(
-        sql`properties.floor_area between ${floor_area} * 0.8 and ${floor_area} * 1.2`,
+        sql`properties.floor_area between ${sqm} * 0.8 and ${sqm} * 1.2`,
       );
 
       const closedTransactionAverageResult =
@@ -78,9 +78,9 @@ export class PropertyValuationService {
         scrapedTransactionAverageResult.average_price?.toString() || '0',
       );
 
-      const pricePerSqmInClosedTransaction = closed / floor_area;
+      const pricePerSqmInClosedTransaction = closed / sqm;
 
-      const pricePerSqmInScrapedTransaction = scraped / floor_area;
+      const pricePerSqmInScrapedTransaction = scraped / sqm;
 
       const condoRemainingUsefulLife =
         (CONDOMINIUM_LIFE_SPAN_IN_YEARS -
@@ -90,11 +90,11 @@ export class PropertyValuationService {
       const appraisalValue =
         (pricePerSqmInClosedTransaction + pricePerSqmInScrapedTransaction) *
         condoRemainingUsefulLife *
-        floor_area;
+        sqm;
 
       return {
-        appraisalValue: formatPhp(appraisalValue),
-        pricePerSqm: formatPhp(pricePerSqmInScrapedTransaction),
+        appraisal_value: formatPhp(appraisalValue),
+        price_per_sqm: formatPhp(pricePerSqmInScrapedTransaction),
       };
     });
 
