@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectKysely } from 'nestjs-kysely';
+import { sql } from 'kysely';
 import { DB } from 'src/common/@types';
 import { SearchPropertyListingType } from 'src/common/dto/searchPropertyListing.dto';
 
@@ -120,11 +121,14 @@ export class PropertyListingService {
     }
 
     if (queryParams?.sqm_min && queryParams?.sqm_max) {
+      const { sqm_min, sqm_max } = queryParams;
+
       // TODO: Between function is better implementation
       // https://github.com/kysely-org/kysely/pull/130
-      query = query
-        .where('properties.sqm', '>=', queryParams.sqm_min)
-        .where('properties.sqm', '<=', queryParams.sqm_max);
+
+      query = query.where(
+        sql`properties.sqm between ${sqm_min} and ${sqm_max}`,
+      );
     }
 
     if (queryParams?.min_price && !queryParams?.max_price) {
@@ -144,18 +148,16 @@ export class PropertyListingService {
     }
 
     if (queryParams?.min_price && queryParams?.max_price) {
-      query = query
-        .where(
-          'properties.current_price',
-          '>=',
-          queryParams.min_price.toString(),
-        )
-        .where(
-          'properties.current_price',
-          '<=',
-          queryParams.max_price.toString(),
-        );
+      const { min_price, max_price } = queryParams;
+
+      query = query.where(
+        sql`current_price between ${min_price} and ${max_price}`,
+      );
     }
+
+    query = query.where(
+      sql`properties.current_price is distinct from 'NaN'::numeric`,
+    );
 
     query = query.orderBy('properties.created_at', 'desc');
 
@@ -197,6 +199,10 @@ export class PropertyListingService {
     if (city) {
       query = query.where('cities.name', 'ilike', '%' + city + '%');
     }
+
+    query = query.where(
+      sql`properties.current_price is distinct from 'NaN'::numeric`,
+    );
 
     return await query.orderBy('cities.name', 'asc').limit(25).execute();
   }
