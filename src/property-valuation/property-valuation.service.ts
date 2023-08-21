@@ -93,8 +93,8 @@ export class PropertyValuationService {
         floor_area;
 
       return {
-        appraisalValue: formatPhp(appraisalValue),
-        pricePerSqm: formatPhp(pricePerSqmInScrapedTransaction),
+        appraisal_value: formatPhp(appraisalValue),
+        price_per_sqm: formatPhp(pricePerSqmInScrapedTransaction),
       };
     });
 
