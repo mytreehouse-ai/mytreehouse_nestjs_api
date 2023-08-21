@@ -95,6 +95,7 @@ export class PropertyValuationService {
       return {
         appraisal_value: formatPhp(appraisalValue),
         price_per_sqm: formatPhp(pricePerSqmInScrapedTransaction),
+        sqm,
       };
     });
 
