@@ -506,6 +506,7 @@ export default class CheerioMyPropertyService {
     }
   }
 
+  // TODO: Move this into a global single property update cron service
   @Cron(CronExpression.EVERY_5_SECONDS)
   async singlePageUpdate() {
     try {
@@ -516,10 +517,15 @@ export default class CheerioMyPropertyService {
       const scrapedData = await this.db
         .selectFrom('scraper_api_data')
         .select(['html_data_id', 'html_data', 'scrape_url'])
-        .where(
-          'scraper_api_data.scrape_url',
-          'ilike',
-          '%https://www.myproperty.ph%',
+        .where((eb) =>
+          eb.or([
+            eb('scraper_api_data.scrape_url', 'ilike', '%www.lamudi.com.ph%'),
+            eb(
+              'scraper_api_data.scrape_url',
+              'ilike',
+              '%https://www.myproperty.ph%',
+            ),
+          ]),
         )
         .where('single_page', '=', true)
         .where('scrape_finish', 'is', false)
