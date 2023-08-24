@@ -43,7 +43,7 @@ export class ScraperApiCronService {
     return response;
   }
 
-  @Cron(CronExpression.EVERY_5_SECONDS)
+  @Cron(CronExpression.EVERY_WEEK)
   async Foo() {
     try {
       const outdatedProperties = await this.db
