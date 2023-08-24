@@ -519,7 +519,11 @@ export default class CheerioMyPropertyService {
         .select(['html_data_id', 'html_data', 'scrape_url'])
         .where((eb) =>
           eb.or([
-            eb('scraper_api_data.scrape_url', 'ilike', '%www.lamudi.com.ph%'),
+            eb(
+              'scraper_api_data.scrape_url',
+              'ilike',
+              '%https://www.lamudi.com.ph%',
+            ),
             eb(
               'scraper_api_data.scrape_url',
               'ilike',
