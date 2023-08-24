@@ -3,7 +3,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { AxiosError } from 'axios';
+import { InjectKysely } from 'nestjs-kysely';
 import { catchError, firstValueFrom } from 'rxjs';
+import { DB } from 'src/common/@types';
 
 @Injectable()
 export class ScraperApiCronService {
@@ -11,6 +13,7 @@ export class ScraperApiCronService {
   constructor(
     private readonly configService: ConfigService,
     private readonly httpService: HttpService,
+    @InjectKysely() private readonly db: DB,
   ) {}
 
   private async asyncJob(data: { urlToScrape: string; singlePage: boolean }) {
@@ -38,6 +41,40 @@ export class ScraperApiCronService {
     );
 
     return response;
+  }
+
+  @Cron(CronExpression.EVERY_5_SECONDS)
+  async Foo() {
+    try {
+      const outdatedProperties = await this.db
+        .selectFrom('properties')
+        .select(['properties.property_id', 'properties.listing_url'])
+        .where('properties.scraper_api_async_job_id', 'is', null)
+        .where('properties.scraper_api_last_run_date', 'is', null)
+        .limit(5)
+        .execute();
+
+      for (const property of outdatedProperties) {
+        const scraperApi = await this.asyncJob({
+          urlToScrape: property.listing_url,
+          singlePage: true,
+        });
+
+        const prt = await this.db
+          .updateTable('properties')
+          .set({
+            scraper_api_async_job_id: scraperApi.id,
+            scraper_api_last_run_date: new Date(),
+          })
+          .where('properties.property_id', '=', property.property_id)
+          .returning(['properties.property_id'])
+          .execute();
+
+        this.logger.log(prt);
+      }
+    } catch (error) {
+      this.logger.error(error);
+    }
   }
 
   @Cron(CronExpression.EVERY_WEEK)
