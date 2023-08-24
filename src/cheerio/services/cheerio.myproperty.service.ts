@@ -153,10 +153,7 @@ export default class CheerioMyPropertyService {
   @Cron(CronExpression.EVERY_5_SECONDS)
   async condominiumWithPaging() {
     try {
-      // TODO: Remove this soon when fully deployed
       if (this.configService.get('ALLOW_SCRAPING') === '0') {
-        this.logger.log('production mode -> condominiumWithPaging -> paused');
-
         return;
       }
 
@@ -169,7 +166,7 @@ export default class CheerioMyPropertyService {
       const scrapeCondominium = await this.db
         .selectFrom('scraper_api_data')
         .select(['html_data_id', 'html_data', 'scrape_url'])
-        .where('scrape_url', 'like', '%https://www.myproperty.ph/condominium%')
+        .where('scrape_url', 'ilike', '%https://www.myproperty.ph/condominium%')
         .where('scrape_finish', '=', false)
         .where('finished_at', 'is', null)
         .orderBy('html_data_id', 'desc')
@@ -184,7 +181,7 @@ export default class CheerioMyPropertyService {
           .select(['html_data_id'])
           .where(
             'scrape_url',
-            'like',
+            'ilike',
             '%https://www.myproperty.ph/condominium%',
           )
           .limit(1)
@@ -198,7 +195,7 @@ export default class CheerioMyPropertyService {
             .deleteFrom('scraper_api_data')
             .where(
               'scrape_url',
-              'like',
+              'ilike',
               '%https://www.myproperty.ph/condominium%',
             )
             .execute();
@@ -282,10 +279,7 @@ export default class CheerioMyPropertyService {
   @Cron(CronExpression.EVERY_5_SECONDS)
   async houseWithPaging() {
     try {
-      // TODO: Remove this soon when fully deployed
       if (this.configService.get('ALLOW_SCRAPING') === '0') {
-        this.logger.log('production mode -> condominiumWithPaging -> paused');
-
         return;
       }
 
@@ -298,7 +292,7 @@ export default class CheerioMyPropertyService {
       const scrapeHouse = await this.db
         .selectFrom('scraper_api_data')
         .select(['html_data_id', 'html_data', 'scrape_url'])
-        .where('scrape_url', 'like', '%https://www.myproperty.ph/house%')
+        .where('scrape_url', 'ilike', '%https://www.myproperty.ph/house%')
         .where('scrape_finish', '=', false)
         .where('finished_at', 'is', null)
         .orderBy('html_data_id', 'desc')
@@ -374,12 +368,105 @@ export default class CheerioMyPropertyService {
     }
   }
 
-  @Cron(CronExpression.EVERY_WEEK)
-  async apartmentWithPaging() {}
+  @Cron(CronExpression.EVERY_5_SECONDS)
+  async apartmentWithPaging() {
+    try {
+      if (this.configService.get('ALLOW_SCRAPING') === '0') {
+        return;
+      }
+
+      type THouse = MyProperty & {
+        metadata: HouseMetadata;
+      };
+
+      const rows: THouse[] = [];
+
+      const scrapeApartment = await this.db
+        .selectFrom('scraper_api_data')
+        .select(['html_data_id', 'html_data', 'scrape_url'])
+        .where('scrape_url', 'ilike', '%myproperty.ph/apartment%')
+        .where('scrape_finish', '=', false)
+        .where('finished_at', 'is', null)
+        .orderBy('html_data_id', 'desc')
+        .limit(5)
+        .execute();
+
+      for (const data of scrapeApartment) {
+        await this.db
+          .updateTable('scraper_api_data')
+          .set({
+            scrape_finish: true,
+            finished_at: new Date(),
+          })
+          .where('html_data_id', '=', data.html_data_id)
+          .execute();
+
+        const scrapedData = cheerioMeUp<HouseMetadata>(data.html_data);
+
+        const isBuy = data.scrape_url.includes('buy');
+
+        scrapedData.map((item) => rows.push({ ...item, isBuy }));
+      }
+
+      rows.forEach(async (item) => {
+        const address = item.metadata?.address ?? item.address;
+        const bedroom = Math.floor(item.metadata.bedrooms ?? 0);
+        const bathroom = Math.floor(item.metadata.bathrooms ?? 0);
+
+        const newHouse = await this.db
+          .insertInto('properties')
+          .values({
+            listing_title: item.title,
+            listing_url: item.href,
+            property_type_id: PROPERTY_TYPES.Townhouse,
+            listing_type_id: item.isBuy
+              ? LISTING_TYPES.ForSale
+              : LISTING_TYPES.ForRent,
+            property_status_id: PROPERTY_STATUS_AVAILABLE,
+            turnover_status_id: TURNOVER_STATUS.Unknown,
+            current_price: item.metadata.price,
+            bedroom,
+            bathroom,
+            lot_area: item.metadata.buildingSize,
+            floor_area: item.metadata.landSize,
+            sqm: item.metadata.buildingSize,
+            parking_lot: Math.floor(item.metadata?.carSpaces || 0),
+            year_built: item.metadata.yearBuilt,
+            city_id: address.toLowerCase().includes('bgc')
+              ? TAGUIG_CITY
+              : UNKNOWN_CITY,
+            address,
+            longitude: item.metadata.geoPoint?.[0],
+            latitude: item.metadata.geoPoint?.[1],
+          })
+          .returning(['property_id'])
+          .onConflict((oc) => oc.column('listing_url').doNothing())
+          .execute();
+
+        if (newHouse.length) {
+          await this.db
+            .insertInto('unstructured_metadata')
+            .values({
+              property_id: newHouse.at(0).property_id,
+              metadata: JSON.stringify(item.metadata),
+            })
+            .execute();
+
+          this.logger.log('new townhouse: ' + newHouse.at(0).property_id);
+        }
+      });
+    } catch (error) {
+      this.logger.error(error);
+    }
+  }
 
   @Cron(CronExpression.EVERY_5_SECONDS)
   async landWithPaging() {
     try {
+      if (this.configService.get('ALLOW_SCRAPING') === '0') {
+        return;
+      }
+
       type TLand = MyProperty & {
         metadata: LandMetadata;
       };
@@ -389,7 +476,7 @@ export default class CheerioMyPropertyService {
       const scrapeLand = await this.db
         .selectFrom('scraper_api_data')
         .select(['html_data_id', 'html_data', 'scrape_url'])
-        .where('scrape_url', 'like', '%https://www.myproperty.ph/land%')
+        .where('scrape_url', 'ilike', '%https://www.myproperty.ph/land%')
         .where('scrape_finish', '=', false)
         .where('finished_at', 'is', null)
         .orderBy('html_data_id', 'desc')
@@ -461,14 +548,11 @@ export default class CheerioMyPropertyService {
   @Cron(CronExpression.EVERY_5_SECONDS)
   async ScraperApiAsyncJob() {
     try {
-      // TODO: Remove this soon when fully deployed
       if (this.configService.get('ALLOW_SCRAPING') === '0') {
-        this.logger.log('production mode -> ScraperApiAsyncJob -> paused');
-
         return;
       }
 
-      const transactionsNgMamaMo = await this.db
+      const transactionQuery = await this.db
         .transaction()
         .execute(async (trx) => {
           const scrapeCondominium = await trx
@@ -476,8 +560,8 @@ export default class CheerioMyPropertyService {
             .select(['property_id', 'listing_url', 'property_type_id'])
             .where((eb) =>
               eb.or([
-                eb('listing_url', 'like', '%https://www.myproperty.ph%'),
-                eb('listing_url', 'like', '%https://www.lamudi.com.ph%'),
+                eb('listing_url', 'ilike', '%https://www.myproperty.ph%'),
+                eb('listing_url', 'ilike', '%https://www.lamudi.com.ph%'),
               ]),
             )
             .where('scraper_api_async_job_id', 'is', null)
@@ -518,7 +602,7 @@ export default class CheerioMyPropertyService {
           return 'Transaction done';
         });
 
-      this.logger.log(transactionsNgMamaMo);
+      this.logger.log(transactionQuery);
     } catch (error) {
       this.logger.error(error);
     }
@@ -527,10 +611,7 @@ export default class CheerioMyPropertyService {
   @Cron(CronExpression.EVERY_5_SECONDS)
   async condominiumSinglePage() {
     try {
-      // TODO: Remove this soon when fully deployed
       if (this.configService.get('ALLOW_SCRAPING') === '0') {
-        this.logger.log('production mode -> condominiumSinglePage -> paused');
-
         return;
       }
 
@@ -580,7 +661,7 @@ export default class CheerioMyPropertyService {
                     const cityId = await this.db
                       .selectFrom('cities')
                       .select('city_id')
-                      .where('name', '=', city)
+                      .where('name', 'ilike', '%' + city + '%')
                       .executeTakeFirst();
 
                     if (cityId) {

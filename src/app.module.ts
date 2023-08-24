@@ -11,6 +11,7 @@ import { CheerioModule } from './cheerio/cheerio.module';
 import { ZodValidationPipe } from 'nestjs-zod';
 import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { ThrottlerBehindProxyGuard } from './common/guard/throttlerBehindProxy.guard';
+import { ScraperApiModule } from './scraper-api/scraper-api.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { ThrottlerBehindProxyGuard } from './common/guard/throttlerBehindProxy.g
     KyselyPostgresModule,
     PropertyValuationModule,
     PropertyListingModule,
+    ScraperApiModule,
     CheerioModule,
   ],
   controllers: [AppController],
