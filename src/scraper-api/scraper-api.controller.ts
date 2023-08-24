@@ -1,14 +1,17 @@
-import { Controller, Post, Body } from '@nestjs/common';
-import { ScraperApiService } from './scraper-api.service';
+import { Controller, Post, Body, Query } from '@nestjs/common';
+import { AsyncJobWebhookDTO } from './common/dto/asyncJobWebhook.dto';
+import { ScraperApiService } from './services/scraper-api.api.service';
+import { AsyncJobQueryDTO } from './common/dto/asyncJobQuery.dto';
 
 @Controller('scraper-api')
 export class ScraperApiController {
   constructor(private readonly scraperApiService: ScraperApiService) {}
 
-  @Post()
-  lamudi(@Body() body: any) {
-    console.log(body);
-
-    return body;
+  @Post('callback')
+  asyncJobCallback(
+    @Body() body: AsyncJobWebhookDTO,
+    @Query() query: AsyncJobQueryDTO,
+  ) {
+    return this.scraperApiService.asyncJobCallback(body, query);
   }
 }

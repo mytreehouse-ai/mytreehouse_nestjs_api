@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ScraperApiService } from './scraper-api.service';
+import { ScraperApiCronService } from './services/scraper-api.cron.service';
 
 describe('ScraperApiService', () => {
-  let service: ScraperApiService;
+  let service: ScraperApiCronService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [ScraperApiService],
+      providers: [ScraperApiCronService],
     }).compile();
 
-    service = module.get<ScraperApiService>(ScraperApiService);
+    service = module.get<ScraperApiCronService>(ScraperApiCronService);
   });
 
   it('should be defined', () => {

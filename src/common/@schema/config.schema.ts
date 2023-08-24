@@ -71,6 +71,33 @@ export const configSchema = z.object({
     .min(1, {
       message: 'DATABASE_PORT must be at least 1 character',
     }),
+  SCRAPER_API_BASE_URL: z
+    .string({
+      description: 'Scraper API base URL',
+      required_error: 'SCRAPER_API_BASE_URL is required',
+      invalid_type_error: 'SCRAPER_API_BASE_URL must be a string',
+    })
+    .url({
+      message: 'SCRAPER_API_BASE_URL must be a valid URL',
+    }),
+  SCRAPER_API_KEY: z
+    .string({
+      description: 'Scraper API key',
+      required_error: 'SCRAPER_API_KEY is required',
+      invalid_type_error: 'SCRAPER_API_KEY must be a string',
+    })
+    .min(1, {
+      message: 'SCRAPER_API_KEY must be at least 1 character',
+    }),
+  SCRAPER_API_ASYNC_JOB_CALLBACK: z
+    .string({
+      description: 'Scraper API async job callback',
+      required_error: 'SCRAPER_API_ASYNC_JOB_CALLBACK is required',
+      invalid_type_error: 'SCRAPER_API_ASYNC_JOB_CALLBACK must be a string',
+    })
+    .url({
+      message: 'SCRAPER_API_ASYNC_JOB_CALLBACK must be a valid URL',
+    }),
   ALLOW_SCRAPING: z.enum(['1', '0'], {
     description: 'Allow scraping',
     required_error: 'ALLOW_SCRAPING is required',
