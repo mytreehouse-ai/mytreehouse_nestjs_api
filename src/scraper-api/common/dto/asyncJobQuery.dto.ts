@@ -3,13 +3,16 @@ import { createZodDto } from 'nestjs-zod';
 
 const AsyncJobQuerySchema = z
   .object({
-    single_page: z
-      .boolean({
-        description: 'The single page of the async job query.',
-        invalid_type_error:
-          'The async job query single page must be a boolean.',
-      })
-      .default(false),
+    single_page: z.preprocess(
+      (input) => input === 'true',
+      z
+        .boolean({
+          description: 'The single page of the async job query.',
+          invalid_type_error:
+            'The async job query single page must be a boolean.',
+        })
+        .default(false),
+    ),
   })
   .partial();
 
