@@ -44,7 +44,6 @@ const AsyncJobWebhookSchema = z.object({
       message: 'The async job webhook url must be a valid url.',
     }),
   response: z.object({
-    headers: z.object({}),
     body: z.string({
       description: 'The body of the async job webhook.',
       required_error: 'The async job webhook body is required.',

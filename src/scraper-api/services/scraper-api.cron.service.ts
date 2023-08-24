@@ -60,7 +60,7 @@ export class ScraperApiCronService {
           singlePage: true,
         });
 
-        const prt = await this.db
+        await this.db
           .updateTable('properties')
           .set({
             scraper_api_async_job_id: scraperApi.id,
@@ -69,8 +69,6 @@ export class ScraperApiCronService {
           .where('properties.property_id', '=', property.property_id)
           .returning(['properties.property_id'])
           .execute();
-
-        this.logger.log(prt);
       }
     } catch (error) {
       this.logger.error(error);
