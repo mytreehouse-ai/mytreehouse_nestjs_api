@@ -76,6 +76,33 @@ export const configSchema = z.object({
     required_error: 'ALLOW_SCRAPING is required',
     invalid_type_error: 'ALLOW_SCRAPING must be one of "1" or "0"',
   }),
+  CONDOMINIUM_LIFE_SPAN_IN_YEARS: z
+    .string({
+      description: 'Condominium life span in years',
+      required_error: 'CONDOMINIUM_LIFE_SPAN_IN_YEARS is required',
+      invalid_type_error: 'CONDOMINIUM_LIFE_SPAN_IN_YEARS must be a string',
+    })
+    .min(1, {
+      message: 'CONDOMINIUM_LIFE_SPAN_IN_YEARS must be at least 1 character',
+    }),
+  SOLD_TRANSACTION_ID: z
+    .string({
+      description: 'Sold transaction ID',
+      required_error: 'SOLD_TRANSACTION_ID is required',
+      invalid_type_error: 'SOLD_TRANSACTION_ID must be a string',
+    })
+    .uuid({
+      message: 'SOLD_TRANSACTION_ID must be a valid UUID',
+    }),
+  CLOSED_TRANSACTION_ID: z
+    .string({
+      description: 'Closed transaction ID',
+      required_error: 'CLOSED_TRANSACTION_ID is required',
+      invalid_type_error: 'CLOSED_TRANSACTION_ID must be a string',
+    })
+    .uuid({
+      message: 'CLOSED_TRANSACTION_ID must be a valid UUID',
+    }),
 });
 
 export type Config = z.infer<typeof configSchema>;

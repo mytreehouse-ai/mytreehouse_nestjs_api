@@ -4,17 +4,25 @@ import { sql } from 'kysely';
 import { DB } from 'src/common/@types';
 import { CondominiumPropertyValuationType } from 'src/common/dto/condominiumPropertyValuation.dto';
 import { formatPhp } from 'src/common/utils/formatPhp';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class PropertyValuationService {
-  constructor(@InjectKysely() private readonly db: DB) {}
+  constructor(
+    private readonly configService: ConfigService,
+    @InjectKysely() private readonly db: DB,
+  ) {}
 
   async condominium(data: CondominiumPropertyValuationType) {
     const { property_type, listing_type, city, sqm, year_built } = data;
 
-    const CONDOMINIUM_LIFE_SPAN_IN_YEARS = 50;
-    const SOLD_TRANSACTION_ID = '3f49fd58-4060-4cda-bd95-67f612effa9c';
-    const CLOSED_TRANSACTION_ID = 'badda289-30a8-4877-a72b-5cb142bf3b96';
+    const CONDOMINIUM_LIFE_SPAN_IN_YEARS = Number(
+      this.configService.get('CONDOMINIUM_LIFE_SPAN_IN_YEARS'),
+    );
+    const CLOSED_TRANSACTION_ID = this.configService.get(
+      'CLOSED_TRANSACTION_ID',
+    );
+    const SOLD_TRANSACTION_ID = this.configService.get('SOLD_TRANSACTION_ID');
 
     const valuate = await this.db.transaction().execute(async (trx) => {
       let closedTransactionAverage = trx
@@ -101,4 +109,10 @@ export class PropertyValuationService {
 
     return valuate;
   }
+
+  async house() {}
+
+  async townhouse() {}
+
+  async lot() {}
 }
