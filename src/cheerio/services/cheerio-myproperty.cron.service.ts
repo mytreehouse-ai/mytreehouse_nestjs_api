@@ -507,7 +507,7 @@ export default class CheerioMyPropertyService {
   }
 
   @Cron(CronExpression.EVERY_5_SECONDS)
-  async condominiumSinglePage() {
+  async singlePageUpdate() {
     try {
       if (this.configService.get('ALLOW_SCRAPING') === '0') {
         return;
@@ -516,6 +516,11 @@ export default class CheerioMyPropertyService {
       const scrapedData = await this.db
         .selectFrom('scraper_api_data')
         .select(['html_data_id', 'html_data', 'scrape_url'])
+        .where(
+          'scraper_api_data.scrape_url',
+          'ilike',
+          '%https://www.myproperty.ph%',
+        )
         .where('single_page', '=', true)
         .where('scrape_finish', 'is', false)
         .orderBy('html_data_id', 'desc')
@@ -624,13 +629,4 @@ export default class CheerioMyPropertyService {
       this.logger.error(error);
     }
   }
-
-  @Cron(CronExpression.EVERY_WEEK)
-  async houseSinglePage() {}
-
-  @Cron(CronExpression.EVERY_WEEK)
-  async apartmentSinglePage() {}
-
-  @Cron(CronExpression.EVERY_WEEK)
-  async landSinglePage() {}
 }
