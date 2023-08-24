@@ -43,7 +43,7 @@ export class ScraperApiCronService {
     return response;
   }
 
-  @Cron(CronExpression.EVERY_WEEK)
+  @Cron(CronExpression.EVERY_5_SECONDS)
   async Foo() {
     try {
       const outdatedProperties = await this.db
@@ -51,7 +51,7 @@ export class ScraperApiCronService {
         .select(['properties.property_id', 'properties.listing_url'])
         .where('properties.scraper_api_async_job_id', 'is', null)
         .where('properties.scraper_api_last_run_date', 'is', null)
-        .limit(5)
+        .limit(1)
         .execute();
 
       for (const property of outdatedProperties) {

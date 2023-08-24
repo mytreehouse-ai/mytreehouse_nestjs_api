@@ -14,4 +14,11 @@ export class ScraperApiController {
   ) {
     return this.scraperApiService.asyncJobCallback(body, query);
   }
+
+  @Post('jobs')
+  asyncJob(@Body() body: any) {
+    console.log(body);
+
+    return 'done';
+  }
 }
