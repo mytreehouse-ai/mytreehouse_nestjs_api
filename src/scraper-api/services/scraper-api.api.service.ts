@@ -20,6 +20,7 @@ export class ScraperApiService {
         single_page: options.single_page ? options.single_page : false,
         scrape_url: data.url,
       })
+      .returning('created_at')
       .executeTakeFirst();
   }
 }
