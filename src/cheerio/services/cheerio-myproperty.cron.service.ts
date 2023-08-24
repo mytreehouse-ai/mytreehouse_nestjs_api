@@ -522,10 +522,6 @@ export default class CheerioMyPropertyService {
         .limit(5)
         .execute();
 
-      this.logger.log(
-        'row count single page property update: ' + scrapedData.length,
-      );
-
       if (scrapedData.length) {
         for (const data of scrapedData) {
           const $ = load(data.html_data);
