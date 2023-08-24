@@ -11,7 +11,7 @@ const AsyncJobWebhookSchema = z.object({
     .uuid({
       message: 'The async job webhook id must be a valid uuid.',
     }),
-  attempt: z.number({
+  attempts: z.number({
     description: 'The number of attempts made to scrape the url.',
     required_error: 'The async job webhook attempt is required.',
     invalid_type_error: 'The async job webhook attempt must be a number.',
