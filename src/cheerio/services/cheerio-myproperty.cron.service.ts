@@ -137,8 +137,6 @@ export default class CheerioMyPropertyService {
         .executeTakeFirst();
 
       if (!scrapeCondominium) {
-        this.logger.log('no condominium to scrape');
-
         const scrapeDataCount = await this.db
           .selectFrom('scraper_api_data')
           .select(['html_data_id'])
