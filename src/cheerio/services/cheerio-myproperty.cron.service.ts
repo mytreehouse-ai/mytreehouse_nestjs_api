@@ -105,43 +105,6 @@ function cheerioMeUp<T>(htmlData: string): {
   return scrapedProperties;
 }
 
-interface ScraperApiResponse {
-  data: {
-    attempts: number;
-    id: string;
-    status: string;
-    statusUrl: string;
-    url: string;
-  };
-  statusCode: number;
-}
-
-const scraperApi = async (url: string, singlePage?: 'yes' | 'no') => {
-  const response = await fetch(
-    'https://mth-jupqc.ondigitalocean.app/mth/scraper/async-job',
-    {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      method: 'POST',
-      body: JSON.stringify({
-        urlToScrape: url,
-        webhookUrl: `https://mth-jupqc.ondigitalocean.app/mth/scraper/response-catch?singlePage=${
-          singlePage === 'yes' ? 'yes' : 'no'
-        }`,
-      }),
-    },
-  );
-
-  if (response.ok) {
-    const data = (await response.json()) as ScraperApiResponse;
-
-    return data;
-  }
-
-  return await Promise.reject('Scraper API failed');
-};
-
 @Injectable()
 export default class CheerioMyPropertyService {
   private readonly logger = new Logger(CheerioMyPropertyService.name);
@@ -540,69 +503,6 @@ export default class CheerioMyPropertyService {
           this.logger.log('new land: ' + newLand.at(0).property_id);
         }
       });
-    } catch (error) {
-      this.logger.error(error);
-    }
-  }
-
-  @Cron(CronExpression.EVERY_5_SECONDS)
-  async ScraperApiAsyncJob() {
-    try {
-      if (this.configService.get('ALLOW_SCRAPING') === '0') {
-        return;
-      }
-
-      const transactionQuery = await this.db
-        .transaction()
-        .execute(async (trx) => {
-          const scrapeCondominium = await trx
-            .selectFrom('properties')
-            .select(['property_id', 'listing_url', 'property_type_id'])
-            .where((eb) =>
-              eb.or([
-                eb('listing_url', 'ilike', '%https://www.myproperty.ph%'),
-                eb('listing_url', 'ilike', '%https://www.lamudi.com.ph%'),
-              ]),
-            )
-            .where('scraper_api_async_job_id', 'is', null)
-            .where('scraper_api_last_run_date', 'is', null)
-            .limit(5)
-            .execute();
-
-          if (scrapeCondominium.length) {
-            for (const data of scrapeCondominium) {
-              const scrapeData = await trx
-                .selectFrom('scraper_api_data')
-                .select(['html_data_id', 'scrape_url', 'scrape_finish'])
-                .where('scrape_url', '=', data.listing_url)
-                .executeTakeFirst();
-
-              if (!scrapeData) {
-                this.logger.log('no scrape data for: ' + data.property_id);
-
-                const scraperApiResponse = await scraperApi(
-                  data.listing_url,
-                  'yes',
-                );
-
-                if (scraperApiResponse) {
-                  await trx
-                    .updateTable('properties')
-                    .set({
-                      scraper_api_async_job_id: scraperApiResponse.data.id,
-                      scraper_api_last_run_date: new Date(),
-                    })
-                    .where('property_id', '=', data.property_id)
-                    .execute();
-                }
-              }
-            }
-          }
-
-          return 'Transaction done';
-        });
-
-      this.logger.log(transactionQuery);
     } catch (error) {
       this.logger.error(error);
     }

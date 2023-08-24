@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ScraperApiController } from './scraper-api.controller';
-import { ScraperApiService } from './scraper-api.service';
+import { ScraperApiCronService } from './services/scraper-api.cron.service';
 
 describe('ScraperApiController', () => {
   let controller: ScraperApiController;
@@ -8,7 +8,7 @@ describe('ScraperApiController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ScraperApiController],
-      providers: [ScraperApiService],
+      providers: [ScraperApiCronService],
     }).compile();
 
     controller = module.get<ScraperApiController>(ScraperApiController);
