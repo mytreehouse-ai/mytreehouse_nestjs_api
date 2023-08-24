@@ -12,9 +12,6 @@ export class ScraperApiService {
     data: AsyncJobWebhookType,
     options: AsyncJobQueryType,
   ) {
-    console.log(data);
-    console.log(options);
-
     return await this.db
       .insertInto('scraper_api_data')
       .values({
