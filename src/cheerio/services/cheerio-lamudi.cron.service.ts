@@ -531,8 +531,10 @@ export class CheerioLamudiService {
             property_status_id: PROPERTY_STATUS_AVAILABLE,
             turnover_status_id: TURNOVER_STATUS.Unknown,
             current_price: item.metadata.price,
-            lot_area: item.metadata.landSize,
-            sqm: item.metadata?.landSize ?? item.metadata?.buildingSize,
+            floor_area: item.metadata?.buildingSize || 0,
+            sqm: item.metadata?.landSize
+              ? item.metadata.landSize
+              : item.metadata.buildingSize,
             city_id: item.address.toLowerCase().includes('bgc')
               ? TAGUIG_CITY
               : UNKNOWN_CITY,
