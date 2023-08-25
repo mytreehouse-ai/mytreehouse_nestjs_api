@@ -487,8 +487,10 @@ export default class CheerioMyPropertyService {
             property_status_id: PROPERTY_STATUS_AVAILABLE,
             turnover_status_id: TURNOVER_STATUS.Unknown,
             current_price: item.metadata.price,
-            floor_area: item.metadata.landSize,
-            sqm: item.metadata.landSize,
+            floor_area: item.metadata?.buildingSize || 0,
+            sqm: item.metadata?.landSize
+              ? item.metadata.landSize
+              : item.metadata.buildingSize,
             city_id: address.toLowerCase().includes('bgc')
               ? TAGUIG_CITY
               : UNKNOWN_CITY,
