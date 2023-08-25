@@ -4,6 +4,7 @@ export const PROPERTY_TYPES = {
   Townhouse: '6b9b82cc-537c-4af6-9200-e82c3d539118',
   VacantLot: '238aa2f4-d1aa-4af7-8afe-9413b24cf3ae',
   Apartment: 'a8171faf-00a9-47e4-b1db-8efca25381a2',
+  Warehouse: '166968a2-1c59-412c-8a50-4a75f61e56bc',
 };
 
 export const LISTING_TYPES = {

@@ -68,6 +68,17 @@ interface LandMetadata {
   geoPoint?: number[];
 }
 
+interface WarehouseMetadata {
+  price: number;
+  category: string;
+  subcategories: string[];
+  buildingSize?: number;
+  landSize?: number;
+  furnished: number;
+  sku: string;
+  geoPoint: number[];
+}
+
 function cheerioMeUp<T>(htmlData: string): {
   href: string;
   title: string;
@@ -306,7 +317,7 @@ export class CheerioLamudiService {
       const scrapeApartment = await this.db
         .selectFrom('scraper_api_data')
         .select(['html_data_id', 'html_data', 'scrape_url'])
-        .where('scrape_url', 'ilike', '%lamudi.com.ph/apartment%')
+        .where('scrape_url', 'ilike', '%https://lamudi.com.ph/apartment%')
         .where('scrape_finish', '=', false)
         .where('finished_at', 'is', null)
         .orderBy('html_data_id', 'desc')
@@ -402,22 +413,22 @@ export class CheerioLamudiService {
         .where('scrape_finish', '=', false)
         .where('finished_at', 'is', null)
         .orderBy('html_data_id', 'desc')
-        .limit(1)
-        .executeTakeFirst();
+        .limit(5)
+        .execute();
 
-      if (scrapeLand) {
+      for (const data of scrapeLand) {
         await this.db
           .updateTable('scraper_api_data')
           .set({
             scrape_finish: true,
             finished_at: new Date(),
           })
-          .where('html_data_id', '=', scrapeLand.html_data_id)
+          .where('html_data_id', '=', data.html_data_id)
           .execute();
 
-        const scrapedData = cheerioMeUp<LandMetadata>(scrapeLand.html_data);
+        const scrapedData = cheerioMeUp<LandMetadata>(data.html_data);
 
-        const isBuy = scrapeLand.scrape_url.includes('buy');
+        const isBuy = data.scrape_url.includes('buy');
 
         scrapedData.map((item) => rows.push({ ...item, isBuy }));
       }
@@ -460,6 +471,89 @@ export class CheerioLamudiService {
             .execute();
 
           this.logger.log('new land: ' + newLand.at(0).property_id);
+        }
+      });
+    } catch (error) {
+      this.logger.error(error);
+    }
+  }
+
+  @Cron(CronExpression.EVERY_5_SECONDS)
+  async warehouseWithPaging() {
+    try {
+      type TWarehouse = LamudiProperty & {
+        metadata: WarehouseMetadata;
+      };
+
+      const rows: TWarehouse[] = [];
+
+      const scrapeWarehouse = await this.db
+        .selectFrom('scraper_api_data')
+        .select(['html_data_id', 'html_data', 'scrape_url'])
+        .where(
+          'scrape_url',
+          'ilike',
+          '%https://www.lamudi.com.ph/commercial/warehouse%',
+        )
+        .where('scrape_finish', '=', false)
+        .where('finished_at', 'is', null)
+        .orderBy('html_data_id', 'desc')
+        .limit(5)
+        .execute();
+
+      for (const data of scrapeWarehouse) {
+        await this.db
+          .updateTable('scraper_api_data')
+          .set({
+            scrape_finish: true,
+            finished_at: new Date(),
+          })
+          .where('html_data_id', '=', data.html_data_id)
+          .execute();
+
+        const scrapedData = cheerioMeUp<WarehouseMetadata>(data.html_data);
+
+        const isBuy = data.scrape_url.includes('buy');
+
+        scrapedData.map((item) => rows.push({ ...item, isBuy }));
+      }
+
+      rows.forEach(async (item) => {
+        const warehouse = await this.db
+          .insertInto('properties')
+          .values({
+            listing_title: item.title,
+            listing_url: item.href,
+            property_type_id: PROPERTY_TYPES.Warehouse,
+            listing_type_id: item.isBuy
+              ? LISTING_TYPES.ForSale
+              : LISTING_TYPES.ForRent,
+            property_status_id: PROPERTY_STATUS_AVAILABLE,
+            turnover_status_id: TURNOVER_STATUS.Unknown,
+            current_price: item.metadata.price,
+            lot_area: item.metadata.landSize,
+            sqm: item.metadata?.landSize ?? item.metadata?.buildingSize,
+            city_id: item.address.toLowerCase().includes('bgc')
+              ? TAGUIG_CITY
+              : UNKNOWN_CITY,
+            address: item.address,
+            longitude: item.metadata.geoPoint?.[0],
+            latitude: item.metadata.geoPoint?.[1],
+          })
+          .returning(['property_id'])
+          .onConflict((oc) => oc.column('listing_url').doNothing())
+          .execute();
+
+        if (warehouse.length) {
+          await this.db
+            .insertInto('unstructured_metadata')
+            .values({
+              property_id: warehouse.at(0).property_id,
+              metadata: JSON.stringify(item.metadata),
+            })
+            .execute();
+
+          this.logger.log('new warehouse: ' + warehouse.at(0).property_id);
         }
       });
     } catch (error) {
