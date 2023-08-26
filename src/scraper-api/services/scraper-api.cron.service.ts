@@ -91,7 +91,7 @@ export class ScraperApiCronService {
           '166968a2-1c59-412c-8a50-4a75f61e56bc',
         )
         .where('properties.sqm_updated', '=', false)
-        .limit(50)
+        .limit(5)
         .execute();
 
       this.logger.log('Warehouse count: ' + warehouses.length);
@@ -108,6 +108,14 @@ export class ScraperApiCronService {
           .executeTakeFirst();
 
         this.logger.log('Warehouse: ' + JSON.stringify(unstructuredMetadata));
+
+        await this.db
+          .updateTable('properties')
+          .set({
+            sqm_updated: true,
+          })
+          .where('properties.property_id', '=', warehouse.property_id)
+          .execute();
 
         if (unstructuredMetadata) {
           const data = unstructuredMetadata as {
@@ -127,7 +135,6 @@ export class ScraperApiCronService {
               floor_area: data.metadata?.buildingSize
                 ? data.metadata.buildingSize
                 : data.metadata?.landSize,
-              sqm_updated: true,
             })
             .where('properties.property_id', '=', warehouse.property_id)
             .returning('properties.property_id')
