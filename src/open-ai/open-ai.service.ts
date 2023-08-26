@@ -122,8 +122,10 @@ export class OpenAiService {
           data.current_price
         }, Amenities: ${data.amenities}, Address: ${data.address}, City: ${
           data.city
-        }, Located_at_central_business_district: ${
+        }, ${
           data.located_at_central_business_district
+            ? 'Located_at_central_business_district,'
+            : ''
         }, Description: ${data.description}, Listing_url: ${data.listing_url}`
           .replace(/\bnull\b/g, 'n/a')
           .replace(/\s+/g, ' ')
@@ -139,9 +141,12 @@ export class OpenAiService {
           })
           .where('properties.property_id', '=', data.property_id)
           .returning('properties.property_id')
-          .execute();
+          .executeTakeFirst();
 
-        console.log(updatedProperty);
+        this.logger.log(
+          'Updated text embedding data for property: ' +
+            updatedProperty.property_id,
+        );
       }
     } catch (error) {
       this.logger.error(error);
