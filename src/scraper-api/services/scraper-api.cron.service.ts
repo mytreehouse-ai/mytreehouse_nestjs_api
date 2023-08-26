@@ -46,6 +46,10 @@ export class ScraperApiCronService {
   @Cron(CronExpression.EVERY_5_SECONDS)
   async updateSingleProperty() {
     try {
+      if (this.configService.get('ALLOW_SCRAPING') === '0') {
+        return;
+      }
+
       const outdatedProperties = await this.db
         .selectFrom('properties')
         .select(['properties.property_id', 'properties.listing_url'])
@@ -69,6 +73,64 @@ export class ScraperApiCronService {
           .where('properties.property_id', '=', property.property_id)
           .returning(['properties.property_id'])
           .execute();
+      }
+    } catch (error) {
+      this.logger.error(error);
+    }
+  }
+
+  @Cron(CronExpression.EVERY_5_SECONDS)
+  async updateWarehouse() {
+    try {
+      const warehouses = await this.db
+        .selectFrom('properties')
+        .select(['properties.property_id'])
+        .where(
+          'properties.property_type_id',
+          '=',
+          '166968a2-1c59-412c-8a50-4a75f61e56bc',
+        )
+        .where('properties.sqm_updated', '=', false)
+        .limit(50)
+        .execute();
+
+      this.logger.log('Warehouse count: ' + warehouses.length);
+
+      for (const warehouse of warehouses) {
+        const unstructuredMetadata = await this.db
+          .selectFrom('unstructured_metadata')
+          .select('metadata')
+          .where(
+            'unstructured_metadata.property_id',
+            '=',
+            warehouse.property_id,
+          )
+          .executeTakeFirst();
+
+        const data = unstructuredMetadata as {
+          metadata: {
+            buildingSize?: number;
+            landSize?: number;
+          };
+        };
+
+        const updatedWarehouse = await this.db
+          .updateTable('properties')
+          .set({
+            sqm: data.metadata?.landSize
+              ? data.metadata.landSize
+              : data.metadata?.buildingSize,
+            lot_area: data.metadata?.landSize ? data.metadata.landSize : null,
+            floor_area: data.metadata?.buildingSize
+              ? data.metadata.buildingSize
+              : data.metadata?.landSize,
+            sqm_updated: true,
+          })
+          .where('properties.property_id', '=', warehouse.property_id)
+          .returning('properties.property_id')
+          .executeTakeFirst();
+
+        this.logger.log('Updated warehouse: ' + updatedWarehouse.property_id);
       }
     } catch (error) {
       this.logger.error(error);
