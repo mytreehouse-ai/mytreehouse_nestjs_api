@@ -109,30 +109,32 @@ export class ScraperApiCronService {
 
         this.logger.log('Warehouse: ' + JSON.stringify(unstructuredMetadata));
 
-        const data = unstructuredMetadata as {
-          metadata: {
-            buildingSize?: number;
-            landSize?: number;
+        if (unstructuredMetadata) {
+          const data = unstructuredMetadata as {
+            metadata: {
+              buildingSize?: number;
+              landSize?: number;
+            };
           };
-        };
 
-        const updatedWarehouse = await this.db
-          .updateTable('properties')
-          .set({
-            sqm: data.metadata?.landSize
-              ? data.metadata.landSize
-              : data.metadata?.buildingSize,
-            lot_area: data.metadata?.landSize ? data.metadata.landSize : null,
-            floor_area: data.metadata?.buildingSize
-              ? data.metadata.buildingSize
-              : data.metadata?.landSize,
-            sqm_updated: true,
-          })
-          .where('properties.property_id', '=', warehouse.property_id)
-          .returning('properties.property_id')
-          .executeTakeFirst();
+          const updatedWarehouse = await this.db
+            .updateTable('properties')
+            .set({
+              sqm: data.metadata?.landSize
+                ? data.metadata.landSize
+                : data.metadata?.buildingSize,
+              lot_area: data.metadata?.landSize ? data.metadata.landSize : null,
+              floor_area: data.metadata?.buildingSize
+                ? data.metadata.buildingSize
+                : data.metadata?.landSize,
+              sqm_updated: true,
+            })
+            .where('properties.property_id', '=', warehouse.property_id)
+            .returning('properties.property_id')
+            .executeTakeFirst();
 
-        this.logger.log('Updated warehouse: ' + updatedWarehouse.property_id);
+          this.logger.log('Updated warehouse: ' + updatedWarehouse.property_id);
+        }
       }
     } catch (error) {
       this.logger.error(error);
