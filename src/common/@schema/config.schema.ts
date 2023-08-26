@@ -130,6 +130,33 @@ export const configSchema = z.object({
     .uuid({
       message: 'CLOSED_TRANSACTION_ID must be a valid UUID',
     }),
+  OPENAI_BASE_URL: z
+    .string({
+      description: 'OpenAI embedding API URL v1',
+      required_error: 'OPENAI_EMBEDDING_API_URL_V1 is required',
+      invalid_type_error: 'OPENAI_EMBEDDING_API_URL_V1 must be a string',
+    })
+    .url({
+      message: 'OPENAI_EMBEDDING_API_URL_V1 must be a valid URL',
+    }),
+  OPENAI_API_KEY: z
+    .string({
+      description: 'OpenAI API key',
+      required_error: 'OPENAI_API_KEY is required',
+      invalid_type_error: 'OPENAI_API_KEY must be a string',
+    })
+    .min(1, {
+      message: 'OPENAI_API_KEY must be at least 1 character',
+    }),
+  OPENAI_EMBEDDING_MODEL: z
+    .string({
+      description: 'OpenAI embedding model',
+      required_error: 'OPENAI_EMBEDDING_MODEL is required',
+      invalid_type_error: 'OPENAI_EMBEDDING_MODEL must be a string',
+    })
+    .min(1, {
+      message: 'OPENAI_EMBEDDING_MODEL must be at least 1 character',
+    }),
 });
 
 export type Config = z.infer<typeof configSchema>;
