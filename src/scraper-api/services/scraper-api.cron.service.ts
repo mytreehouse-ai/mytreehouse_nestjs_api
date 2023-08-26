@@ -91,7 +91,7 @@ export class ScraperApiCronService {
           '166968a2-1c59-412c-8a50-4a75f61e56bc',
         )
         .where('properties.sqm_updated', '=', false)
-        .limit(50)
+        .limit(25)
         .execute();
 
       this.logger.log('Warehouse count: ' + warehouses.length);
