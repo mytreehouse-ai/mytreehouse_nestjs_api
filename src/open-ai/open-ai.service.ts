@@ -139,9 +139,12 @@ export class OpenAiService {
           })
           .where('properties.property_id', '=', data.property_id)
           .returning('properties.property_id')
-          .execute();
+          .executeTakeFirst();
 
-        console.log(updatedProperty);
+        this.logger.log(
+          'Updated text embedding data for property: ' +
+            updatedProperty.property_id,
+        );
       }
     } catch (error) {
       this.logger.error(error);
