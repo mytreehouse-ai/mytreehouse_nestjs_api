@@ -122,8 +122,10 @@ export class OpenAiService {
           data.current_price
         }, Amenities: ${data.amenities}, Address: ${data.address}, City: ${
           data.city
-        }, Located_at_central_business_district: ${
+        }, ${
           data.located_at_central_business_district
+            ? 'Located_at_central_business_district,'
+            : ''
         }, Description: ${data.description}, Listing_url: ${data.listing_url}`
           .replace(/\bnull\b/g, 'n/a')
           .replace(/\s+/g, ' ')
