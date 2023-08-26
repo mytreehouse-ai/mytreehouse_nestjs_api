@@ -107,6 +107,8 @@ export class ScraperApiCronService {
           )
           .executeTakeFirst();
 
+        this.logger.log('Warehouse: ' + JSON.stringify(unstructuredMetadata));
+
         const data = unstructuredMetadata as {
           metadata: {
             buildingSize?: number;
