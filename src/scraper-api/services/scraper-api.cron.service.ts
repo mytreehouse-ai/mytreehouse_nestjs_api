@@ -82,6 +82,10 @@ export class ScraperApiCronService {
   @Cron(CronExpression.EVERY_5_SECONDS)
   async updateWarehouse() {
     try {
+      if (this.configService.get('ALLOW_SCRAPING') === '0') {
+        return;
+      }
+
       const warehouses = await this.db
         .selectFrom('properties')
         .select(['properties.property_id'])

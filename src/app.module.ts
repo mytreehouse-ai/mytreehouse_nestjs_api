@@ -12,6 +12,7 @@ import { ZodValidationPipe } from 'nestjs-zod';
 import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { ThrottlerBehindProxyGuard } from './common/guard/throttlerBehindProxy.guard';
 import { ScraperApiModule } from './scraper-api/scraper-api.module';
+import { OpenAiModule } from './open-ai/open-ai.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { ScraperApiModule } from './scraper-api/scraper-api.module';
     PropertyListingModule,
     ScraperApiModule,
     CheerioModule,
+    OpenAiModule,
   ],
   controllers: [AppController],
   providers: [
