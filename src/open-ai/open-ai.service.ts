@@ -105,6 +105,7 @@ export class OpenAiService {
         ])
         .where('properties.ready_to_be_vectorized', '=', true)
         .where('properties.embedding', 'is', null)
+        .where('properties.description', 'is not', null)
         .limit(25)
         .execute();
 
