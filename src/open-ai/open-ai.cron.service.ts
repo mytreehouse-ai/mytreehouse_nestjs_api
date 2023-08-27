@@ -172,6 +172,7 @@ export class OpenAiCronService {
           .set({
             embedding: JSON.stringify(vectorized.data[0].embedding),
             embedding_text: text,
+            embedding_update_rerun: true,
           })
           .where('properties.property_id', '=', data.property_id)
           .returning('properties.property_id')
