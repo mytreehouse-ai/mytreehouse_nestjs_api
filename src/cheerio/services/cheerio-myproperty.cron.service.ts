@@ -657,6 +657,25 @@ export default class CheerioMyPropertyService {
           //     .trim(),
           // );
 
+          if (!firstScriptContent) {
+            await this.db
+              .updateTable('properties')
+              .set({ images })
+              .where('listing_url', '=', data.scrape_url)
+              .execute();
+
+            await this.db
+              .updateTable('scraper_api_data')
+              .set({
+                scrape_finish: true,
+                finished_at: new Date(),
+              })
+              .where('html_data_id', '=', data.html_data_id)
+              .execute();
+
+            continue;
+          }
+
           if (firstScriptContent.includes('dataLayer = ')) {
             const locationRegex = /"location":\s*({[\s\S]*?})/;
             const locationMatch = firstScriptContent.match(locationRegex);
