@@ -56,8 +56,6 @@ export class OpenAiCronService {
   @Cron(CronExpression.EVERY_5_SECONDS)
   async updateRecordsWithEmbeddings() {
     try {
-      const UNKNOWN_CITY = '3323750f-270c-43b9-bd46-7c077309c948';
-
       const properties = await this.db
         .selectFrom('properties')
         .innerJoin(
@@ -108,7 +106,6 @@ export class OpenAiCronService {
         .where('properties.ready_to_be_vectorized', '=', true)
         .where('properties.embedding', 'is', null)
         .where('properties.description', 'is not', null)
-        .where('properties.city_id', '!=', UNKNOWN_CITY)
         .limit(25)
         .execute();
 
