@@ -12,40 +12,54 @@ export class OpenAiCronService {
     @InjectKysely() private readonly db: DB,
   ) {}
 
-  // TODO: Remove this
+  @Cron(CronExpression.EVERY_5_SECONDS)
   async insertToSinglestoreDb() {
     try {
       const properties = await this.db
         .selectFrom('properties')
         .select([
           'properties.property_id',
+          'properties.listing_title',
           'properties.listing_url',
           'properties.embedding_text',
           'properties.embedding',
         ])
-        .where(
-          'properties.property_type_id',
-          '=',
-          'e718f6f2-6f4b-48ae-9dff-93d64d5fb1a8',
+        .where((eb) =>
+          eb.or([
+            eb(
+              'properties.property_type_id',
+              '=',
+              'e718f6f2-6f4b-48ae-9dff-93d64d5fb1a8',
+            ),
+            eb(
+              'properties.property_type_id',
+              '=',
+              '166968a2-1c59-412c-8a50-4a75f61e56bc',
+            ),
+          ]),
         )
         .where('properties.embedding', 'is not', null)
         .where('properties.singlestore_db_migrated', '=', false)
-        .limit(25)
+        .limit(5)
         .execute();
 
       for (const data of properties) {
-        const response = await fetch('http://localhost:3000/api/hello', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
+        const response = await fetch(
+          'https://beta.mytree.house/api/embedding-insert',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              property_id: data.property_id,
+              listing_title: data.listing_title,
+              listing_url: data.listing_url,
+              vector: data.embedding,
+              text: data.embedding_text,
+            }),
           },
-          body: JSON.stringify({
-            property_id: data.property_id,
-            listing_url: data.listing_url,
-            vector: data.embedding,
-            text: data.embedding_text,
-          }),
-        });
+        );
 
         if (response.ok) {
           await this.db
@@ -130,12 +144,10 @@ export class OpenAiCronService {
           ]),
         )
         .where('properties.ready_to_be_vectorized', '=', true)
-        // Temporarily disable for update
-        // .where('properties.embedding', 'is', null)
+        .where('properties.embedding', 'is', null)
         .where('properties.listing_title', 'is not', null)
         .where('properties.description', 'is not', null)
-        .where('properties.embedding_update_rerun', '=', false)
-        .limit(50)
+        .limit(5)
         .execute();
 
       for (const data of properties) {
@@ -172,35 +184,10 @@ export class OpenAiCronService {
           .set({
             embedding: JSON.stringify(vectorized.data[0].embedding),
             embedding_text: text,
-            embedding_update_rerun: true,
           })
           .where('properties.property_id', '=', data.property_id)
           .returning('properties.property_id')
           .executeTakeFirst();
-
-        const updateInSinglestoreDb = await fetch(
-          'https://beta.mytree.house/api/embedding-update',
-          {
-            method: 'PATCH',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              property_id: data.property_id,
-              text,
-              listing_url: data.listing_url,
-              listing_title: data.listing_title,
-              vector: vectorized.data[0].embedding,
-            }),
-          },
-        );
-
-        if (updateInSinglestoreDb.ok) {
-          this.logger.log(
-            'Updated embedding data for property in singlestore db: ' +
-              data.property_id,
-          );
-        }
 
         this.logger.log(
           'Updated text embedding data for property: ' +
