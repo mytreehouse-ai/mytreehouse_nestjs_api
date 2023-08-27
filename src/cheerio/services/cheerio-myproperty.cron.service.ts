@@ -659,12 +659,6 @@ export default class CheerioMyPropertyService {
 
           if (!firstScriptContent) {
             await this.db
-              .updateTable('properties')
-              .set({ images })
-              .where('listing_url', '=', data.scrape_url)
-              .execute();
-
-            await this.db
               .updateTable('scraper_api_data')
               .set({
                 scrape_finish: true,
