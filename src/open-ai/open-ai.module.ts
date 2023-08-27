@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { OpenAiService } from './open-ai.service';
+import { OpenAiCronService } from './open-ai.cron.service';
 import { ScheduleModule } from '@nestjs/schedule';
 import { HttpModule } from '@nestjs/axios';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -18,6 +18,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       }),
     }),
   ],
-  providers: [OpenAiService],
+  providers: [OpenAiCronService],
 })
 export class OpenAiModule {}
