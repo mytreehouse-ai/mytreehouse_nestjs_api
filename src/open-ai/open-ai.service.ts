@@ -103,6 +103,7 @@ export class OpenAiService {
           'properties.is_cbd as located_at_central_business_district',
           'properties.description',
         ])
+        .where('properties.ready_to_be_vectorized', '=', true)
         .where('properties.embedding', 'is', null)
         .limit(25)
         .execute();
