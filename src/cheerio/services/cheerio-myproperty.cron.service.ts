@@ -635,7 +635,7 @@ export default class CheerioMyPropertyService {
         .where('single_page', '=', true)
         .where('scrape_finish', 'is', false)
         .orderBy('html_data_id', 'desc')
-        .limit(5)
+        .limit(25)
         .execute();
 
       if (scrapedData.length) {
