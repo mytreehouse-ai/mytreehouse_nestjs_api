@@ -8,8 +8,8 @@ import { catchError, firstValueFrom } from 'rxjs';
 import { DB } from 'src/common/@types';
 
 @Injectable()
-export class OpenAiService {
-  private readonly logger = new Logger(OpenAiService.name);
+export class OpenAiCronService {
+  private readonly logger = new Logger(OpenAiCronService.name);
   constructor(
     private readonly configService: ConfigService,
     private readonly httpService: HttpService,
