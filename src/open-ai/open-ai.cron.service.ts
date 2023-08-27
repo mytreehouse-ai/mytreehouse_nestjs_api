@@ -1,53 +1,64 @@
-import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { AxiosError } from 'axios';
 import { InjectKysely } from 'nestjs-kysely';
-import { catchError, firstValueFrom } from 'rxjs';
 import { DB } from 'src/common/@types';
+import { OpenAiApiService } from './open-ai.api.service';
 
 @Injectable()
 export class OpenAiCronService {
   private readonly logger = new Logger(OpenAiCronService.name);
   constructor(
-    private readonly configService: ConfigService,
-    private readonly httpService: HttpService,
+    private readonly openAiApiService: OpenAiApiService,
     @InjectKysely() private readonly db: DB,
   ) {}
 
-  async textToVector(text: string) {
+  // TODO: Remove this
+  async insertToSinglestoreDb() {
     try {
-      const { data: response } = await firstValueFrom(
-        this.httpService
-          .post('/v1/embeddings', {
-            model: this.configService.get('OPENAI_EMBEDDING_MODEL'),
-            input: text,
-          })
-          .pipe(
-            catchError((error: AxiosError) => {
-              this.logger.error(error.response.data);
+      const properties = await this.db
+        .selectFrom('properties')
+        .select([
+          'properties.property_id',
+          'properties.listing_url',
+          'properties.embedding_text',
+          'properties.embedding',
+        ])
+        .where(
+          'properties.property_type_id',
+          '=',
+          'e718f6f2-6f4b-48ae-9dff-93d64d5fb1a8',
+        )
+        .where('properties.embedding', 'is not', null)
+        .where('properties.singlestore_db_migrated', '=', false)
+        .limit(25)
+        .execute();
 
-              throw 'An error happened in open-ai api!';
-            }),
-          ),
-      );
+      for (const data of properties) {
+        const response = await fetch('http://localhost:3000/api/hello', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            property_id: data.property_id,
+            listing_url: data.listing_url,
+            vector: data.embedding,
+            text: data.embedding_text,
+          }),
+        });
 
-      const data = response as {
-        object: string;
-        data: Array<{
-          object: string;
-          index: number;
-          embedding: Array<number>;
-        }>;
-        model: string;
-        usage: {
-          prompt_tokens: number;
-          total_tokens: number;
-        };
-      };
+        if (response.ok) {
+          await this.db
+            .updateTable('properties')
+            .set({
+              singlestore_db_migrated: true,
+            })
+            .where('properties.property_id', '=', data.property_id)
+            .execute();
+        }
 
-      return data;
+        console.log(await response.json());
+      }
     } catch (error) {
       this.logger.error(error);
     }
@@ -103,37 +114,58 @@ export class OpenAiCronService {
           'properties.is_cbd as located_at_central_business_district',
           'properties.description',
         ])
+        // Temporarily disable for update
+        .where((eb) =>
+          eb.or([
+            eb(
+              'properties.property_type_id',
+              '=',
+              'e718f6f2-6f4b-48ae-9dff-93d64d5fb1a8',
+            ),
+            eb(
+              'properties.property_type_id',
+              '=',
+              '166968a2-1c59-412c-8a50-4a75f61e56bc',
+            ),
+          ]),
+        )
         .where('properties.ready_to_be_vectorized', '=', true)
-        .where('properties.embedding', 'is', null)
+        // Temporarily disable for update
+        // .where('properties.embedding', 'is', null)
+        .where('properties.listing_title', 'is not', null)
         .where('properties.description', 'is not', null)
-        .limit(25)
+        .where('properties.embedding_update_rerun', '=', false)
+        .limit(50)
         .execute();
 
       for (const data of properties) {
-        const text = `Property_type: ${data.property_type}, Listing_type: ${
-          data.listing_type
-        }, Turnover_status: ${data.turnover_status}, Property_status: ${
-          data.property_status
-        }, Sqm: ${data.sqm}, Floor_area: ${data.floor_area}, Lot_area: ${
-          data.lot_area
-        }, Bedroom: ${data.bedroom}, Bathroom: ${data.bathroom}, Parking_lot: ${
-          data.parking_lot
-        }, ${data.studio_type ? 'Studio type,' : ''} Building_name: ${
-          data.building_name
-        }, Year_built: ${data.year_built}, Current_price: ${
-          data.current_price
-        }, Amenities: ${data.amenities}, Address: ${data.address}, City: ${
-          data.city
-        }, ${
-          data.located_at_central_business_district
-            ? 'Located_at_central_business_district,'
-            : ''
-        }, Description: ${data.description}, Listing_url: ${data.listing_url}`
+        const text = `Listing_title: ${data.listing_title} Property_type: ${
+          data.property_type
+        }, Listing_type: ${data.listing_type}, 
+          ${
+            data.turnover_status ? data.turnover_status + ',' : ''
+          }, Property_status: ${data.property_status}, Sqm: ${
+            data.sqm
+          }, Floor_area: ${data.floor_area}, Lot_area: ${
+            data.lot_area
+          }, Bedroom count: ${data.bedroom}, Bathroom count: ${
+            data.bathroom
+          }, Parking_lot count: ${data.parking_lot}, ${
+            data.studio_type ? 'Studio type unit,' : ''
+          } Building_name: ${data.building_name}, Year_built: ${
+            data.year_built
+          }, Current_market_price: ${data.current_price}, Amenities: ${
+            data.amenities
+          }, Address_location: ${data.address}, City: ${data.city}, ${
+            data.located_at_central_business_district
+              ? 'Located_at_central_business_district,'
+              : ''
+          }, Description: ${data.description}, Listing_url: ${data.listing_url}`
           .replace(/\bnull\b/g, 'n/a')
           .replace(/\s+/g, ' ')
           .toLowerCase();
 
-        const vectorized = await this.textToVector(text);
+        const vectorized = await this.openAiApiService.createEmbedding(text);
 
         const updatedProperty = await this.db
           .updateTable('properties')
@@ -144,6 +176,30 @@ export class OpenAiCronService {
           .where('properties.property_id', '=', data.property_id)
           .returning('properties.property_id')
           .executeTakeFirst();
+
+        const updateInSinglestoreDb = await fetch(
+          'https://beta.mytree.house/api/embedding-update',
+          {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              property_id: data.property_id,
+              text,
+              listing_url: data.listing_url,
+              listing_title: data.listing_title,
+              vector: vectorized.data[0].embedding,
+            }),
+          },
+        );
+
+        if (updateInSinglestoreDb.ok) {
+          this.logger.log(
+            'Updated embedding data for property in singlestore db: ' +
+              data.property_id,
+          );
+        }
 
         this.logger.log(
           'Updated text embedding data for property: ' +

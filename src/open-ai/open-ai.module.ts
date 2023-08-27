@@ -3,6 +3,7 @@ import { OpenAiCronService } from './open-ai.cron.service';
 import { ScheduleModule } from '@nestjs/schedule';
 import { HttpModule } from '@nestjs/axios';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { OpenAiApiService } from './open-ai.api.service';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       }),
     }),
   ],
-  providers: [OpenAiCronService],
+  providers: [OpenAiApiService, OpenAiCronService],
+  exports: [OpenAiApiService],
 })
 export class OpenAiModule {}
