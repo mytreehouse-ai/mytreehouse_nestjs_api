@@ -116,6 +116,14 @@ export class PropertyListingService {
       query = query.where('cities.city_id', '=', queryParams.city);
     }
 
+    if (queryParams?.ilike) {
+      query = query.where(
+        'properties.listing_title',
+        'ilike',
+        queryParams.ilike,
+      );
+    }
+
     if (queryParams?.sqm) {
       query = query.where('properties.sqm', '=', queryParams.sqm);
     }
