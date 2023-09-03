@@ -152,8 +152,24 @@ export class ScraperApiCronService {
     }
   }
 
+  @Cron(CronExpression.EVERY_DAY_AT_7AM)
+  async lamudiParanuqueBfHomes() {
+    for (let i = 1; i <= 100; i++) {
+      await this.asyncJob({
+        urlToScrape: `https://www.lamudi.com.ph/metro-manila/paranaque/b-f-homes/house/buy/?script=23&page=${i}`,
+        singlePage: false,
+      });
+    }
+
+    this.logger.log('Lamudi Paranuque Bf Homes.');
+  }
+
   @Cron(CronExpression.EVERY_WEEK)
   async lamudiCondominiumForSale() {
+    if (this.configService.get('ALLOW_SCRAPING') === '0') {
+      return;
+    }
+
     for (let i = 1; i <= 100; i++) {
       await this.asyncJob({
         urlToScrape: `https://www.lamudi.com.ph/condominium/buy/?page=${i}`,
@@ -164,6 +180,10 @@ export class ScraperApiCronService {
 
   @Cron(CronExpression.EVERY_WEEK)
   async lamudiCondominiumForRent() {
+    if (this.configService.get('ALLOW_SCRAPING') === '0') {
+      return;
+    }
+
     for (let i = 1; i <= 100; i++) {
       await this.asyncJob({
         urlToScrape: `https://www.lamudi.com.ph/condominium/rent/?page=${i}`,
@@ -174,6 +194,10 @@ export class ScraperApiCronService {
 
   @Cron(CronExpression.EVERY_WEEK)
   async lamudiHouseForSale() {
+    if (this.configService.get('ALLOW_SCRAPING') === '0') {
+      return;
+    }
+
     for (let i = 1; i <= 100; i++) {
       await this.asyncJob({
         urlToScrape: `https://www.lamudi.com.ph/house/buy/?page=${i}`,
@@ -184,6 +208,10 @@ export class ScraperApiCronService {
 
   @Cron(CronExpression.EVERY_WEEK)
   async lamudiHouseForRent() {
+    if (this.configService.get('ALLOW_SCRAPING') === '0') {
+      return;
+    }
+
     for (let i = 1; i <= 100; i++) {
       await this.asyncJob({
         urlToScrape: `https://www.lamudi.com.ph/house/rent/?page=${i}`,
@@ -194,6 +222,10 @@ export class ScraperApiCronService {
 
   @Cron(CronExpression.EVERY_WEEK)
   async lamudiApartmentForSale() {
+    if (this.configService.get('ALLOW_SCRAPING') === '0') {
+      return;
+    }
+
     for (let i = 1; i <= 100; i++) {
       await this.asyncJob({
         urlToScrape: `https://www.lamudi.com.ph/apartment/buy/?page=${i}`,
@@ -204,6 +236,10 @@ export class ScraperApiCronService {
 
   @Cron(CronExpression.EVERY_WEEK)
   async lamudiApartmentForRent() {
+    if (this.configService.get('ALLOW_SCRAPING') === '0') {
+      return;
+    }
+
     for (let i = 1; i <= 100; i++) {
       await this.asyncJob({
         urlToScrape: `https://www.lamudi.com.ph/apartment/rent/?page=${i}`,
@@ -214,6 +250,10 @@ export class ScraperApiCronService {
 
   @Cron(CronExpression.EVERY_WEEK)
   async lamudiLotForSale() {
+    if (this.configService.get('ALLOW_SCRAPING') === '0') {
+      return;
+    }
+
     for (let i = 1; i <= 100; i++) {
       await this.asyncJob({
         urlToScrape: `https://www.lamudi.com.ph/lot/buy/?page=${i}`,
@@ -224,6 +264,10 @@ export class ScraperApiCronService {
 
   @Cron(CronExpression.EVERY_WEEK)
   async lamudiLotForRent() {
+    if (this.configService.get('ALLOW_SCRAPING') === '0') {
+      return;
+    }
+
     for (let i = 1; i <= 100; i++) {
       await this.asyncJob({
         urlToScrape: `https://www.lamudi.com.ph/lot/rent/?page=${i}`,
@@ -234,6 +278,10 @@ export class ScraperApiCronService {
 
   @Cron(CronExpression.EVERY_WEEK)
   async lamudiWarehouseForRent() {
+    if (this.configService.get('ALLOW_SCRAPING') === '0') {
+      return;
+    }
+
     for (let i = 1; i <= 100; i++) {
       await this.asyncJob({
         urlToScrape: `https://www.lamudi.com.ph/commercial/warehouse/rent/?page=${i}`,
@@ -244,6 +292,10 @@ export class ScraperApiCronService {
 
   @Cron(CronExpression.EVERY_WEEK)
   async mypropertyCondominiumForSale() {
+    if (this.configService.get('ALLOW_SCRAPING') === '0') {
+      return;
+    }
+
     for (let i = 1; i <= 100; i++) {
       await this.asyncJob({
         urlToScrape: `https://www.myproperty.ph/condominium/buy/?page=${i}`,
@@ -254,6 +306,10 @@ export class ScraperApiCronService {
 
   @Cron(CronExpression.EVERY_WEEK)
   async mypropertyCondominiumForRent() {
+    if (this.configService.get('ALLOW_SCRAPING') === '0') {
+      return;
+    }
+
     for (let i = 1; i <= 100; i++) {
       await this.asyncJob({
         urlToScrape: `https://www.myproperty.ph/condominium/rent/?page=${i}`,
@@ -264,6 +320,10 @@ export class ScraperApiCronService {
 
   @Cron(CronExpression.EVERY_WEEK)
   async mypropertyHouseForSale() {
+    if (this.configService.get('ALLOW_SCRAPING') === '0') {
+      return;
+    }
+
     for (let i = 1; i <= 100; i++) {
       await this.asyncJob({
         urlToScrape: `https://www.myproperty.ph/house/buy/?page=${i}`,
@@ -274,6 +334,10 @@ export class ScraperApiCronService {
 
   @Cron(CronExpression.EVERY_WEEK)
   async mypropertyHouseForRent() {
+    if (this.configService.get('ALLOW_SCRAPING') === '0') {
+      return;
+    }
+
     for (let i = 1; i <= 100; i++) {
       await this.asyncJob({
         urlToScrape: `https://www.myproperty.ph/house/rent/?page=${i}`,
@@ -284,6 +348,10 @@ export class ScraperApiCronService {
 
   @Cron(CronExpression.EVERY_WEEK)
   async mypropertyApartmentForSale() {
+    if (this.configService.get('ALLOW_SCRAPING') === '0') {
+      return;
+    }
+
     for (let i = 1; i <= 100; i++) {
       await this.asyncJob({
         urlToScrape: `https://www.myproperty.ph/apartment/buy/?page=${i}`,
@@ -294,6 +362,10 @@ export class ScraperApiCronService {
 
   @Cron(CronExpression.EVERY_WEEK)
   async mypropertyApartmentForRent() {
+    if (this.configService.get('ALLOW_SCRAPING') === '0') {
+      return;
+    }
+
     for (let i = 1; i <= 100; i++) {
       await this.asyncJob({
         urlToScrape: `https://www.myproperty.ph/apartment/rent/?page=${i}`,
@@ -304,6 +376,10 @@ export class ScraperApiCronService {
 
   @Cron(CronExpression.EVERY_WEEK)
   async mypropertyLandForSale() {
+    if (this.configService.get('ALLOW_SCRAPING') === '0') {
+      return;
+    }
+
     for (let i = 1; i <= 100; i++) {
       await this.asyncJob({
         urlToScrape: `https://www.myproperty.ph/land/buy/?page=${i}`,
@@ -314,6 +390,10 @@ export class ScraperApiCronService {
 
   @Cron(CronExpression.EVERY_WEEK)
   async mypropertyLandForRent() {
+    if (this.configService.get('ALLOW_SCRAPING') === '0') {
+      return;
+    }
+
     for (let i = 1; i <= 100; i++) {
       await this.asyncJob({
         urlToScrape: `https://www.myproperty.ph/land/rent/?page=${i}`,
@@ -324,6 +404,10 @@ export class ScraperApiCronService {
 
   @Cron(CronExpression.EVERY_WEEK)
   async mypropertyPhWarehouseForRent() {
+    if (this.configService.get('ALLOW_SCRAPING') === '0') {
+      return;
+    }
+
     for (let i = 1; i <= 53; i++) {
       await this.asyncJob({
         urlToScrape: `https://www.myproperty.ph/metro-manila/commercial/warehouse/rent/?page=${i}`,
