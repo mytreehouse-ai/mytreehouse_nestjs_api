@@ -120,7 +120,7 @@ export class PropertyListingService {
       query = query.where(
         'properties.listing_title',
         'ilike',
-        queryParams.ilike,
+        '%' + queryParams.ilike + '%',
       );
     }
 
