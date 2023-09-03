@@ -75,14 +75,10 @@ const SearchPropertyListingSchema = z
       .uuid({
         message: 'City id must be a valid uuid',
       }),
-    ilike: z
-      .string({
-        description: 'Search query',
-        invalid_type_error: 'Search query must be a string',
-      })
-      .nonempty({
-        message: 'Search query must not be empty',
-      }),
+    ilike: z.string({
+      description: 'Search query',
+      invalid_type_error: 'Search query must be a string',
+    }),
     sqm: z.preprocess(
       (val) => Number(val),
       z
