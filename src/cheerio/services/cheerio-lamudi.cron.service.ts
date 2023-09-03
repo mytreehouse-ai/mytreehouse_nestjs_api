@@ -481,6 +481,10 @@ export class CheerioLamudiService {
   @Cron(CronExpression.EVERY_5_SECONDS)
   async warehouseWithPaging() {
     try {
+      if (this.configService.get('ALLOW_SCRAPING') === '0') {
+        return;
+      }
+
       type TWarehouse = LamudiProperty & {
         metadata: WarehouseMetadata;
       };

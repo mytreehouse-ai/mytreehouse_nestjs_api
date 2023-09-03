@@ -522,6 +522,10 @@ export default class CheerioMyPropertyService {
   @Cron(CronExpression.EVERY_5_SECONDS)
   async warehouseWithPaging() {
     try {
+      if (this.configService.get('ALLOW_SCRAPING') === '0') {
+        return;
+      }
+
       type TWarehouse = MyProperty & {
         metadata: WarehouseMetadata;
       };
