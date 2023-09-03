@@ -123,9 +123,6 @@ export class PropertyListingService {
     if (queryParams?.sqm_min && queryParams?.sqm_max) {
       const { sqm_min, sqm_max } = queryParams;
 
-      // TODO: Between function is better implementation
-      // https://github.com/kysely-org/kysely/pull/130
-
       query = query.where(
         sql`properties.sqm between ${sqm_min} and ${sqm_max}`,
       );
