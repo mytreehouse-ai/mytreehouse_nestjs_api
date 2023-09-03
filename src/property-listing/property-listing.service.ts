@@ -116,6 +116,14 @@ export class PropertyListingService {
       query = query.where('cities.city_id', '=', queryParams.city);
     }
 
+    if (queryParams?.ilike) {
+      query = query.where(
+        'properties.listing_title',
+        'ilike',
+        queryParams.ilike,
+      );
+    }
+
     if (queryParams?.sqm) {
       query = query.where('properties.sqm', '=', queryParams.sqm);
     }
@@ -158,7 +166,7 @@ export class PropertyListingService {
 
     query = query.orderBy('properties.created_at', 'desc');
 
-    return query.limit(queryParams?.page_limit || 25).execute();
+    return query.limit(queryParams?.page_limit || 100).execute();
   }
 
   async getOnePropertyListing(propertyId: string) {
