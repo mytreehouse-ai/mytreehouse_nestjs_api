@@ -7,13 +7,14 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
   app.setGlobalPrefix('api');
 
   app.enableCors({
     origin: '*',
   });
 
-  app.useBodyParser('json', { limit: '2mb' });
+  app.useBodyParser('json', { limit: '1mb' });
 
   app.use(
     hpp({
@@ -32,7 +33,7 @@ async function bootstrap() {
   app.use(helmet.xssFilter());
   app.use(compression());
 
-  await app.listen(3000);
+  await app.listen(Number(process.env.PORT || '3000'));
 }
 
 bootstrap();
