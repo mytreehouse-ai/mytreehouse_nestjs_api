@@ -26,10 +26,12 @@ import { OpenAiModule } from './open-ai/open-ai.module';
     ThrottlerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        ttl: Number(config.get('THROTTLE_TTL')),
-        limit: Number(config.get('THROTTLE_LIMIT')),
-      }),
+      useFactory: (config: ConfigService) => [
+        {
+          ttl: config.get('THROTTLE_TTL'),
+          limit: config.get('THROTTLE_LIMIT'),
+        },
+      ],
     }),
     KyselyPostgresModule,
     PropertyValuationModule,

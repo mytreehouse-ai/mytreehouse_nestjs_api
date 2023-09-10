@@ -60,113 +60,129 @@ export class PropertyListingService {
   }
 
   async searchPropertyListings(queryParams: SearchPropertyListingType) {
-    let query = this.searchPropertyListingQueryBuilder();
+    const rawQuery = await sql`
+      SELECT
+        p.property_id,
+        p.listing_title,
+        p.listing_url,
+        pt.name AS property_type_name,
+        lt.name AS listing_type_name,
+        ts.name AS turnover_status_name,
+        p.current_price,
+        p.floor_area,
+        p.lot_area,
+        p.sqm,
+        p.bedroom,
+        p.bathroom,
+        p.parking_lot,
+        p.is_corner_lot,
+        p.studio_type,
+        p.building_name,
+        p.year_built,
+        ct.name AS city_name,
+        p.address,
+        p.is_active,
+        p.is_cbd,
+        p.amenities,
+        p.images,
+        p.description,
+        p.longitude,
+        p.latitude,
+        p.lease_end,
+        p.created_at,
+        ts_rank(to_tsvector('english', p.listing_title || ' ' || coalesce(p.description, '')), websearch_to_tsquery('bf homes')) AS rank
+      FROM properties p
+      INNER JOIN property_types pt ON pt.property_type_id = p.property_type_id
+      INNER JOIN listing_types lt ON lt.listing_type_id = p.listing_type_id
+      INNER JOIN turnover_status ts ON ts.turnover_status_id = p.turnover_status_id
+      INNER JOIN cities ct ON ct.city_id = p.city_id
+      WHERE p.images IS NOT NULL AND
+      p.longitude IS NOT NULL AND
+      p.latitude IS NOT NULL AND
+      p.current_price IS DISTINCT FROM 'NaN'::NUMERIC
+      ${
+        queryParams?.ilike
+          ? sql`
+      AND to_tsvector('english', p.listing_title || ' ' || coalesce(p.description, '')) @@ websearch_to_tsquery('bf homes')
+      `
+          : sql``
+      }
+      ${
+        queryParams?.property_type
+          ? sql`
+      AND p.property_type_id = ${queryParams.property_type}
+      `
+          : sql``
+      }
+      ${
+        queryParams?.listing_type
+          ? sql`
+      AND p.listing_type_id = ${queryParams.listing_type}
+      `
+          : sql``
+      }
+      ${
+        queryParams?.turnover_status
+          ? sql`
+      AND p.turnover_status_id = ${queryParams.turnover_status}
+      `
+          : sql``
+      }
+      ${
+        queryParams?.bedroom_count
+          ? sql`
+        AND p.bedroom = ${queryParams.bedroom_count}
+        `
+          : sql``
+      }
+      ${
+        queryParams?.bathroom_count
+          ? sql`
+      AND p.bathroom = ${queryParams.bathroom_count}
+      `
+          : sql``
+      }
+      ${
+        queryParams?.studio_type
+          ? sql`
+      AND p.studio_type = ${queryParams.studio_type}
+      `
+          : sql``
+      }
+      ${
+        queryParams?.is_cbd
+          ? sql`
+      AND p.is_cbd = ${queryParams.is_cbd}
+      `
+          : sql``
+      }
+      ${
+        queryParams?.city
+          ? sql`
+      AND p.city_id = ${queryParams.city}
+      `
+          : sql``
+      }
+      ${
+        queryParams?.sqm
+          ? sql`
+      AND p.sqm = ${queryParams.sqm}
+      `
+          : sql``
+      }
+      ${
+        queryParams?.sqm_min && queryParams?.sqm_max
+          ? sql`
+      AND p.sqm BETWEEN ${queryParams.sqm_min} AND ${queryParams.sqm_max}
+      `
+          : sql``
+      }
+      ORDER BY p.created_at DESC LIMIT ${
+        queryParams?.page_limit ? queryParams.page_limit : 100
+      }
+    `.execute(this.db);
 
-    if (queryParams?.property_type) {
-      query = query.where(
-        'property_types.property_type_id',
-        '=',
-        queryParams.property_type,
-      );
-    }
-
-    if (queryParams?.listing_type) {
-      query = query.where(
-        'listing_types.listing_type_id',
-        '=',
-        queryParams.listing_type,
-      );
-    }
-
-    if (queryParams?.turnover_status) {
-      query = query.where(
-        'turnover_status.turnover_status_id',
-        '=',
-        queryParams.turnover_status,
-      );
-    }
-
-    query = query.where('properties.images', 'is not', null);
-
-    if (queryParams?.bedroom_count) {
-      query = query.where('properties.bedroom', '=', queryParams.bedroom_count);
-    }
-
-    if (queryParams?.bathroom_count) {
-      query = query.where(
-        'properties.bathroom',
-        '=',
-        queryParams.bathroom_count,
-      );
-    }
-
-    if (queryParams?.studio_type) {
-      query = query.where(
-        'properties.studio_type',
-        '=',
-        queryParams.studio_type,
-      );
-    }
-
-    if (queryParams?.is_cbd) {
-      query = query.where('properties.is_cbd', '=', queryParams.is_cbd);
-    }
-
-    if (queryParams?.city) {
-      query = query.where('cities.city_id', '=', queryParams.city);
-    }
-
-    if (queryParams?.ilike) {
-      query = query.where(
-        'properties.listing_title',
-        'ilike',
-        '%' + queryParams.ilike + '%',
-      );
-    }
-
-    if (queryParams?.sqm) {
-      query = query.where('properties.sqm', '=', queryParams.sqm);
-    }
-
-    if (queryParams?.sqm_min && queryParams?.sqm_max) {
-      const { sqm_min, sqm_max } = queryParams;
-
-      query = query.where(
-        sql`properties.sqm between ${sqm_min} and ${sqm_max}`,
-      );
-    }
-
-    if (queryParams?.min_price && !queryParams?.max_price) {
-      query = query.where(
-        'properties.current_price',
-        '>=',
-        queryParams.min_price.toString(),
-      );
-    }
-
-    if (!queryParams?.min_price && queryParams?.max_price) {
-      query = query.where(
-        'properties.current_price',
-        '<=',
-        queryParams.max_price.toString(),
-      );
-    }
-
-    if (queryParams?.min_price && queryParams?.max_price) {
-      const { min_price, max_price } = queryParams;
-
-      query = query.where(
-        sql`current_price between ${min_price} and ${max_price}`,
-      );
-    }
-
-    query = query.where(
-      sql`properties.current_price is distinct from 'NaN'::numeric`,
-    );
-
-    query = query.orderBy('properties.created_at', 'desc');
-
-    return query.limit(queryParams?.page_limit || 100).execute();
+    return rawQuery.rows;
   }
 
   async getOnePropertyListing(propertyId: string) {
