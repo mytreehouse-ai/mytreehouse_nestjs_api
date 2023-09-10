@@ -103,77 +103,77 @@ export class PropertyListingService {
       ${
         queryParams?.ilike
           ? sql`
-      to_tsvector('english', p.listing_title || ' ' || coalesce(p.description, '')) @@ websearch_to_tsquery('bf homes')
+      AND to_tsvector('english', p.listing_title || ' ' || coalesce(p.description, '')) @@ websearch_to_tsquery('bf homes')
       `
           : sql``
       }
       ${
         queryParams?.property_type
           ? sql`
-      p.property_type_id = ${queryParams.property_type}
+      AND p.property_type_id = ${queryParams.property_type}
       `
           : sql``
       }
       ${
         queryParams?.listing_type
           ? sql`
-      p.listing_type_id = ${queryParams.listing_type}
+      AND p.listing_type_id = ${queryParams.listing_type}
       `
           : sql``
       }
       ${
         queryParams?.turnover_status
           ? sql`
-      p.turnover_status_id = ${queryParams.turnover_status}
+      AND p.turnover_status_id = ${queryParams.turnover_status}
       `
           : sql``
       }
       ${
         queryParams?.bedroom_count
           ? sql`
-        p.bedroom = ${queryParams.bedroom_count}
+        AND p.bedroom = ${queryParams.bedroom_count}
         `
           : sql``
       }
       ${
         queryParams?.bathroom_count
           ? sql`
-      p.bathroom = ${queryParams.bathroom_count}
+      AND p.bathroom = ${queryParams.bathroom_count}
       `
           : sql``
       }
       ${
         queryParams?.studio_type
           ? sql`
-      p.studio_type = ${queryParams.studio_type}
+      AND p.studio_type = ${queryParams.studio_type}
       `
           : sql``
       }
       ${
         queryParams?.is_cbd
           ? sql`
-      p.is_cbd = ${queryParams.is_cbd}
+      AND p.is_cbd = ${queryParams.is_cbd}
       `
           : sql``
       }
       ${
         queryParams?.city
           ? sql`
-      p.city_id = ${queryParams.city}
+      AND p.city_id = ${queryParams.city}
       `
           : sql``
       }
       ${
         queryParams?.sqm
           ? sql`
-      p.sqm = ${queryParams.sqm}
+      AND p.sqm = ${queryParams.sqm}
       `
           : sql``
       }
       ${
         queryParams?.sqm_min && queryParams?.sqm_max
           ? sql`
-      p.sqm BETWEEN ${queryParams.sqm_min} AND ${queryParams.sqm_max}
+      AND p.sqm BETWEEN ${queryParams.sqm_min} AND ${queryParams.sqm_max}
       `
           : sql``
       }
