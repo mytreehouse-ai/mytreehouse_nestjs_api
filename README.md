@@ -31,5 +31,5 @@ teller run pnpm run kysely-codegen
 aicommits model config
 
 ```
-aicommits config set model=gpt-4
+aicommits config set model=gpt-3.5-turbo-16k
 ```
