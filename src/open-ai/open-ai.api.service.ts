@@ -24,7 +24,7 @@ export class OpenAiApiService {
             catchError((error: AxiosError) => {
               this.logger.error(error.response.data);
 
-              throw 'An error happened in open-ai api!';
+              throw 'An error happened in open-ai api';
             }),
           ),
       );
