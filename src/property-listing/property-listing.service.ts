@@ -3,6 +3,7 @@ import { InjectKysely } from 'nestjs-kysely';
 import { sql } from 'kysely';
 import { DB } from 'src/common/@types';
 import { SearchPropertyListingType } from 'src/common/dto/searchPropertyListing.dto';
+import { UNKNOWN_CITY } from 'src/common/constant';
 
 @Injectable()
 export class PropertyListingService {
@@ -99,6 +100,7 @@ export class PropertyListingService {
       WHERE p.images IS NOT NULL AND
       p.longitude IS NOT NULL AND
       p.latitude IS NOT NULL AND
+      p.city_id != ${UNKNOWN_CITY} AND
       p.current_price IS DISTINCT FROM 'NaN'::NUMERIC
       ${
         queryParams?.ilike
