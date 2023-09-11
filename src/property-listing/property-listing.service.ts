@@ -90,8 +90,14 @@ export class PropertyListingService {
         p.longitude,
         p.latitude,
         p.lease_end,
-        p.created_at,
-        ts_rank(to_tsvector('english', p.listing_title || ' ' || coalesce(p.description, '')), websearch_to_tsquery('bf homes')) AS rank
+        p.created_at
+        ${
+          queryParams?.ilike
+            ? sql`
+        ,ts_rank(to_tsvector('english', p.listing_title || ' ' || coalesce(p.description, '')), websearch_to_tsquery(${queryParams.ilike})) AS rank
+        `
+            : sql``
+        }
       FROM properties p
       INNER JOIN property_types pt ON pt.property_type_id = p.property_type_id
       INNER JOIN listing_types lt ON lt.listing_type_id = p.listing_type_id
@@ -105,7 +111,7 @@ export class PropertyListingService {
       ${
         queryParams?.ilike
           ? sql`
-      AND to_tsvector('english', p.listing_title || ' ' || coalesce(p.description, '')) @@ websearch_to_tsquery('bf homes')
+      AND to_tsvector('english', p.listing_title || ' ' || coalesce(p.description, '')) @@ websearch_to_tsquery(${queryParams.ilike})
       `
           : sql``
       }
