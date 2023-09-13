@@ -100,8 +100,10 @@ export class PropertyValuationService {
         condoRemainingUsefulLife *
         sqm;
 
+      console.log(appraisalValue); //This should be the original result but showing incorrect valuation
+
       return {
-        appraisal_value: formatPhp(appraisalValue),
+        appraisal_value: formatPhp(pricePerSqmInScrapedTransaction * sqm),
         price_per_sqm: formatPhp(pricePerSqmInScrapedTransaction),
         sqm,
       };
