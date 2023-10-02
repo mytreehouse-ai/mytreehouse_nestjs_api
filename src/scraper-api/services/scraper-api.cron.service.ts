@@ -139,6 +139,7 @@ export class ScraperApiCronService {
                 ? data.metadata.landSize
                 : data.metadata?.buildingSize,
               lot_area: data.metadata?.landSize ? data.metadata.landSize : null,
+              // TODO: Transfer this into it's own property called building_size
               floor_area: data.metadata?.buildingSize
                 ? data.metadata.buildingSize
                 : data.metadata?.landSize,
@@ -299,7 +300,7 @@ export class ScraperApiCronService {
       return;
     }
 
-    for (let i = 1; i <= 25; i++) {
+    for (let i = 1; i <= 100; i++) {
       await this.asyncJob({
         urlToScrape: `https://www.lamudi.com.ph/commercial/warehouse/rent/?page=${i}`,
         singlePage: false,
@@ -420,14 +421,28 @@ export class ScraperApiCronService {
   }
 
   @Cron(CronExpression.EVERY_WEEK)
+  async mypropertyPhWarehouseForSale() {
+    if (this.configService.get('ALLOW_SCRAPING') === '0') {
+      return;
+    }
+
+    for (let i = 1; i <= 28; i++) {
+      await this.asyncJob({
+        urlToScrape: `https://www.myproperty.ph/commercial/warehouse/buy/?page=${i}`,
+        singlePage: false,
+      });
+    }
+  }
+
+  @Cron(CronExpression.EVERY_WEEK)
   async mypropertyPhWarehouseForRent() {
     if (this.configService.get('ALLOW_SCRAPING') === '0') {
       return;
     }
 
-    for (let i = 1; i <= 53; i++) {
+    for (let i = 1; i <= 100; i++) {
       await this.asyncJob({
-        urlToScrape: `https://www.myproperty.ph/metro-manila/commercial/warehouse/rent/?page=${i}`,
+        urlToScrape: `https://www.myproperty.ph/commercial/warehouse/rent/?page=${i}`,
         singlePage: false,
       });
     }
