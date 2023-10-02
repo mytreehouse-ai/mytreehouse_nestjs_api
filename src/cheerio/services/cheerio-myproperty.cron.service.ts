@@ -129,7 +129,7 @@ export default class CheerioMyPropertyService {
     this.runOnce = false;
   }
 
-  @Cron(CronExpression.EVERY_WEEK)
+  @Cron(CronExpression.EVERY_5_SECONDS)
   async condominiumWithPaging() {
     try {
       if (this.configService.get('ALLOW_SCRAPING') === '0') {
@@ -253,7 +253,7 @@ export default class CheerioMyPropertyService {
     }
   }
 
-  @Cron(CronExpression.EVERY_WEEK)
+  @Cron(CronExpression.EVERY_5_SECONDS)
   async houseWithPaging() {
     try {
       if (this.configService.get('ALLOW_SCRAPING') === '0') {
@@ -345,7 +345,7 @@ export default class CheerioMyPropertyService {
     }
   }
 
-  @Cron(CronExpression.EVERY_WEEK)
+  @Cron(CronExpression.EVERY_5_SECONDS)
   async apartmentWithPaging() {
     try {
       if (this.configService.get('ALLOW_SCRAPING') === '0') {
@@ -437,7 +437,7 @@ export default class CheerioMyPropertyService {
     }
   }
 
-  @Cron(CronExpression.EVERY_WEEK)
+  @Cron(CronExpression.EVERY_5_SECONDS)
   async landWithPaging() {
     try {
       if (this.configService.get('ALLOW_SCRAPING') === '0') {
@@ -524,7 +524,7 @@ export default class CheerioMyPropertyService {
     }
   }
 
-  @Cron(CronExpression.EVERY_WEEK)
+  @Cron(CronExpression.EVERY_5_SECONDS)
   async warehouseWithPaging() {
     try {
       if (this.configService.get('ALLOW_SCRAPING') === '0') {
@@ -617,7 +617,7 @@ export default class CheerioMyPropertyService {
   }
 
   // TODO: Move this into a global single property update cron service
-  @Cron(CronExpression.EVERY_WEEK)
+  @Cron(CronExpression.EVERY_5_SECONDS)
   async singlePageUpdate() {
     try {
       if (this.configService.get('ALLOW_SCRAPING') === '0') {
@@ -646,6 +646,8 @@ export default class CheerioMyPropertyService {
         .orderBy('html_data_id', 'desc')
         .limit(25)
         .execute();
+
+      console.log(scrapedData);
 
       if (scrapedData.length) {
         for (const data of scrapedData) {
@@ -756,6 +758,8 @@ export default class CheerioMyPropertyService {
             })
             .where('html_data_id', '=', data.html_data_id)
             .execute();
+
+          this.logger.log('Warehouse updated');
         }
       }
     } catch (error) {

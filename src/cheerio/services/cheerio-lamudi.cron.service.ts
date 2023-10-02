@@ -116,7 +116,7 @@ export class CheerioLamudiService {
     private readonly configService: ConfigService,
   ) {}
 
-  @Cron(CronExpression.EVERY_WEEK)
+  @Cron(CronExpression.EVERY_5_SECONDS)
   async condominiumWithPaging() {
     try {
       if (this.configService.get('ALLOW_SCRAPING') === '0') {
@@ -209,7 +209,7 @@ export class CheerioLamudiService {
     }
   }
 
-  @Cron(CronExpression.EVERY_WEEK)
+  @Cron(CronExpression.EVERY_5_SECONDS)
   async houseWithPaging() {
     try {
       if (this.configService.get('ALLOW_SCRAPING') === '0') {
@@ -301,7 +301,7 @@ export class CheerioLamudiService {
     }
   }
 
-  @Cron(CronExpression.EVERY_WEEK)
+  @Cron(CronExpression.EVERY_5_SECONDS)
   async apartmentWithPaging() {
     try {
       if (this.configService.get('ALLOW_SCRAPING') === '0') {
@@ -393,7 +393,7 @@ export class CheerioLamudiService {
     }
   }
 
-  @Cron(CronExpression.EVERY_WEEK)
+  @Cron(CronExpression.EVERY_5_SECONDS)
   async landWithPaging() {
     try {
       if (this.configService.get('ALLOW_SCRAPING') === '0') {
@@ -570,15 +570,15 @@ export class CheerioLamudiService {
     }
   }
 
-  @Cron(CronExpression.EVERY_WEEK)
+  @Cron(CronExpression.EVERY_5_SECONDS)
   async condominiumSinglePage() {}
 
-  @Cron(CronExpression.EVERY_WEEK)
+  @Cron(CronExpression.EVERY_5_SECONDS)
   async houseSinglePage() {}
 
-  @Cron(CronExpression.EVERY_WEEK)
+  @Cron(CronExpression.EVERY_5_SECONDS)
   async apartmentSinglePage() {}
 
-  @Cron(CronExpression.EVERY_WEEK)
+  @Cron(CronExpression.EVERY_5_SECONDS)
   async landSinglePage() {}
 }

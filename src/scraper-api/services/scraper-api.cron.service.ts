@@ -155,7 +155,7 @@ export class ScraperApiCronService {
     }
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_7AM)
+  @Cron(CronExpression.EVERY_WEEK)
   async lamudiParanuqueBfHomes() {
     for (let i = 1; i <= 100; i++) {
       await this.asyncJob({
@@ -279,13 +279,11 @@ export class ScraperApiCronService {
     }
   }
 
-  @Cron('0 */2 * * * *')
+  @Cron(CronExpression.EVERY_WEEK)
   async lamudiWarehouseForSale() {
     if (this.configService.get('ALLOW_SCRAPING') === '0') {
       return;
     }
-
-    console.log('run buy');
 
     for (let i = 1; i <= 25; i++) {
       await this.asyncJob({
@@ -295,13 +293,11 @@ export class ScraperApiCronService {
     }
   }
 
-  @Cron('0 */2 * * * *')
+  @Cron(CronExpression.EVERY_WEEK)
   async lamudiWarehouseForRent() {
-    if (this.configService.get('ALLOW_SCRAPING') === '0' && !this.runOnce) {
+    if (this.configService.get('ALLOW_SCRAPING') === '0') {
       return;
     }
-
-    console.log('run rent');
 
     for (let i = 1; i <= 25; i++) {
       await this.asyncJob({
@@ -309,13 +305,11 @@ export class ScraperApiCronService {
         singlePage: false,
       });
     }
-
-    this.runOnce = true;
   }
 
   @Cron(CronExpression.EVERY_WEEK)
   async mypropertyCondominiumForSale() {
-    if (this.configService.get('ALLOW_SCRAPING') === '0' && !this.runOnce) {
+    if (this.configService.get('ALLOW_SCRAPING') === '0') {
       return;
     }
 
@@ -325,8 +319,6 @@ export class ScraperApiCronService {
         singlePage: false,
       });
     }
-
-    this.runOnce = true;
   }
 
   @Cron(CronExpression.EVERY_WEEK)
