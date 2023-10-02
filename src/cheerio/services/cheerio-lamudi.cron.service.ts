@@ -116,7 +116,7 @@ export class CheerioLamudiService {
     private readonly configService: ConfigService,
   ) {}
 
-  @Cron(CronExpression.EVERY_5_SECONDS)
+  @Cron(CronExpression.EVERY_WEEK)
   async condominiumWithPaging() {
     try {
       if (this.configService.get('ALLOW_SCRAPING') === '0') {
@@ -209,7 +209,7 @@ export class CheerioLamudiService {
     }
   }
 
-  @Cron(CronExpression.EVERY_5_SECONDS)
+  @Cron(CronExpression.EVERY_WEEK)
   async houseWithPaging() {
     try {
       if (this.configService.get('ALLOW_SCRAPING') === '0') {
@@ -301,7 +301,7 @@ export class CheerioLamudiService {
     }
   }
 
-  @Cron(CronExpression.EVERY_5_SECONDS)
+  @Cron(CronExpression.EVERY_WEEK)
   async apartmentWithPaging() {
     try {
       if (this.configService.get('ALLOW_SCRAPING') === '0') {
@@ -393,7 +393,7 @@ export class CheerioLamudiService {
     }
   }
 
-  @Cron(CronExpression.EVERY_5_SECONDS)
+  @Cron(CronExpression.EVERY_WEEK)
   async landWithPaging() {
     try {
       if (this.configService.get('ALLOW_SCRAPING') === '0') {
@@ -497,7 +497,7 @@ export class CheerioLamudiService {
         .where(
           'scrape_url',
           'ilike',
-          '%https://www.lamudi.com.ph/commercial/warehouse%',
+          '%https://www.lamudi.com.ph/commercial/warehouse/buy%',
         )
         .where('scrape_finish', '=', false)
         .where('finished_at', 'is', null)

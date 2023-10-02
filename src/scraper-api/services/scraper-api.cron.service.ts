@@ -9,12 +9,15 @@ import { DB } from 'src/common/@types';
 
 @Injectable()
 export class ScraperApiCronService {
+  runOnce: boolean;
   private readonly logger = new Logger(ScraperApiCronService.name);
   constructor(
     private readonly configService: ConfigService,
     private readonly httpService: HttpService,
     @InjectKysely() private readonly db: DB,
-  ) {}
+  ) {
+    this.runOnce = false;
+  }
 
   private async asyncJob(data: { urlToScrape: string; singlePage: boolean }) {
     const { urlToScrape, singlePage } = data;
@@ -276,23 +279,43 @@ export class ScraperApiCronService {
     }
   }
 
-  @Cron(CronExpression.EVERY_WEEK)
-  async lamudiWarehouseForRent() {
+  @Cron('0 */2 * * * *')
+  async lamudiWarehouseForSale() {
     if (this.configService.get('ALLOW_SCRAPING') === '0') {
       return;
     }
 
-    for (let i = 1; i <= 100; i++) {
+    console.log('run buy');
+
+    for (let i = 1; i <= 25; i++) {
       await this.asyncJob({
-        urlToScrape: `https://www.lamudi.com.ph/commercial/warehouse/rent/?page=${i}`,
+        urlToScrape: `https://www.lamudi.com.ph/commercial/warehouse/buy/?page=${i}`,
         singlePage: false,
       });
     }
   }
 
+  @Cron('0 */2 * * * *')
+  async lamudiWarehouseForRent() {
+    if (this.configService.get('ALLOW_SCRAPING') === '0' && !this.runOnce) {
+      return;
+    }
+
+    console.log('run rent');
+
+    for (let i = 1; i <= 25; i++) {
+      await this.asyncJob({
+        urlToScrape: `https://www.lamudi.com.ph/commercial/warehouse/rent/?page=${i}`,
+        singlePage: false,
+      });
+    }
+
+    this.runOnce = true;
+  }
+
   @Cron(CronExpression.EVERY_WEEK)
   async mypropertyCondominiumForSale() {
-    if (this.configService.get('ALLOW_SCRAPING') === '0') {
+    if (this.configService.get('ALLOW_SCRAPING') === '0' && !this.runOnce) {
       return;
     }
 
@@ -302,6 +325,8 @@ export class ScraperApiCronService {
         singlePage: false,
       });
     }
+
+    this.runOnce = true;
   }
 
   @Cron(CronExpression.EVERY_WEEK)
