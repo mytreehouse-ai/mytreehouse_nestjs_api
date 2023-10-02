@@ -118,13 +118,18 @@ function cheerioMeUp<T>(htmlData: string): {
 
 @Injectable()
 export default class CheerioMyPropertyService {
+  runOnce: boolean;
+
   private readonly logger = new Logger(CheerioMyPropertyService.name);
+
   constructor(
     @InjectKysely() private readonly db: DB,
     private readonly configService: ConfigService,
-  ) {}
+  ) {
+    this.runOnce = false;
+  }
 
-  @Cron(CronExpression.EVERY_5_SECONDS)
+  @Cron(CronExpression.EVERY_WEEK)
   async condominiumWithPaging() {
     try {
       if (this.configService.get('ALLOW_SCRAPING') === '0') {
@@ -248,7 +253,7 @@ export default class CheerioMyPropertyService {
     }
   }
 
-  @Cron(CronExpression.EVERY_5_SECONDS)
+  @Cron(CronExpression.EVERY_WEEK)
   async houseWithPaging() {
     try {
       if (this.configService.get('ALLOW_SCRAPING') === '0') {
@@ -340,7 +345,7 @@ export default class CheerioMyPropertyService {
     }
   }
 
-  @Cron(CronExpression.EVERY_5_SECONDS)
+  @Cron(CronExpression.EVERY_WEEK)
   async apartmentWithPaging() {
     try {
       if (this.configService.get('ALLOW_SCRAPING') === '0') {
@@ -432,7 +437,7 @@ export default class CheerioMyPropertyService {
     }
   }
 
-  @Cron(CronExpression.EVERY_5_SECONDS)
+  @Cron(CronExpression.EVERY_WEEK)
   async landWithPaging() {
     try {
       if (this.configService.get('ALLOW_SCRAPING') === '0') {
@@ -519,7 +524,7 @@ export default class CheerioMyPropertyService {
     }
   }
 
-  @Cron(CronExpression.EVERY_5_SECONDS)
+  @Cron(CronExpression.EVERY_WEEK)
   async warehouseWithPaging() {
     try {
       if (this.configService.get('ALLOW_SCRAPING') === '0') {
@@ -612,7 +617,7 @@ export default class CheerioMyPropertyService {
   }
 
   // TODO: Move this into a global single property update cron service
-  @Cron(CronExpression.EVERY_5_SECONDS)
+  @Cron(CronExpression.EVERY_WEEK)
   async singlePageUpdate() {
     try {
       if (this.configService.get('ALLOW_SCRAPING') === '0') {

@@ -97,8 +97,8 @@ export class PropertyValuationService {
 
       const appraisalValue =
         (pricePerSqmInClosedTransaction + pricePerSqmInScrapedTransaction) *
-        condoRemainingUsefulLife *
-        sqm;
+        sqm *
+        condoRemainingUsefulLife;
 
       console.log(appraisalValue); //This should be the original result but showing incorrect valuation
 
