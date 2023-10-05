@@ -280,9 +280,9 @@ export class ScraperApiCronService {
     }
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_4PM)
+  @Cron(CronExpression.EVERY_5_SECONDS)
   async lamudiWarehouseForSale() {
-    if (this.configService.get('ALLOW_SCRAPING') === '0') {
+    if (this.configService.get('ALLOW_SCRAPING') === '0' && !this.runOnce) {
       return;
     }
 
@@ -292,11 +292,13 @@ export class ScraperApiCronService {
         singlePage: false,
       });
     }
+
+    this.runOnce = true;
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_4PM)
+  @Cron(CronExpression.EVERY_5_SECONDS)
   async lamudiWarehouseForRent() {
-    if (this.configService.get('ALLOW_SCRAPING') === '0') {
+    if (this.configService.get('ALLOW_SCRAPING') === '0' && !this.runOnce) {
       return;
     }
 
@@ -306,6 +308,8 @@ export class ScraperApiCronService {
         singlePage: false,
       });
     }
+
+    this.runOnce = true;
   }
 
   @Cron(CronExpression.EVERY_WEEK)
@@ -420,9 +424,9 @@ export class ScraperApiCronService {
     }
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_4PM)
+  @Cron(CronExpression.EVERY_5_SECONDS)
   async mypropertyPhWarehouseForSale() {
-    if (this.configService.get('ALLOW_SCRAPING') === '0') {
+    if (this.configService.get('ALLOW_SCRAPING') === '0' && !this.runOnce) {
       return;
     }
 
@@ -432,11 +436,13 @@ export class ScraperApiCronService {
         singlePage: false,
       });
     }
+
+    this.runOnce = true;
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_4PM)
+  @Cron(CronExpression.EVERY_5_SECONDS)
   async mypropertyPhWarehouseForRent() {
-    if (this.configService.get('ALLOW_SCRAPING') === '0') {
+    if (this.configService.get('ALLOW_SCRAPING') === '0' && !this.runOnce) {
       return;
     }
 
@@ -446,5 +452,7 @@ export class ScraperApiCronService {
         singlePage: false,
       });
     }
+
+    this.runOnce = true;
   }
 }
