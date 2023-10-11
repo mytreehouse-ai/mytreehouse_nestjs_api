@@ -83,8 +83,7 @@ export class ScraperApiCronService {
           'created_at',
         ])
         .where('migrated_to_neon', '=', false)
-        .orderBy('created_at', 'desc')
-        .limit(20)
+        .limit(30)
         .execute();
 
       properties.forEach(async (property) => {
