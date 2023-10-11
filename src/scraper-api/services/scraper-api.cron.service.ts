@@ -91,10 +91,18 @@ export class ScraperApiCronService {
           this.httpService
             .post('https://mytreehouse.vercel.app/api/properties', property)
             .pipe(
-              catchError((error: AxiosError) => {
+              catchError(async (error: AxiosError) => {
                 const err = error.response.data as { message: string };
 
                 this.logger.error(err.message);
+
+                if (err.message.includes('duplicate key value')) {
+                  await this.db
+                    .updateTable('properties')
+                    .set({ migrated_to_neon: true })
+                    .where('property_id', '=', property.property_id)
+                    .execute();
+                }
 
                 throw 'An error happened in inserting data to vercel neon!';
               }),
