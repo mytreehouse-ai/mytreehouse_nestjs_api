@@ -92,7 +92,9 @@ export class ScraperApiCronService {
             .post('https://mytreehouse.vercel.app/api/properties', property)
             .pipe(
               catchError((error: AxiosError) => {
-                this.logger.error(error.response.data);
+                const err = error.response.data as { message: string };
+
+                this.logger.error(err.message);
 
                 throw 'An error happened in inserting data to vercel neon!';
               }),
