@@ -49,10 +49,6 @@ export class ScraperApiCronService {
   @Cron(CronExpression.EVERY_5_SECONDS)
   async migrateToVercelNeon() {
     try {
-      if (this.configService.get('ALLOW_SCRAPING') === '0') {
-        return;
-      }
-
       const properties = await this.db
         .selectFrom('properties')
         .select([
@@ -94,7 +90,7 @@ export class ScraperApiCronService {
       properties.forEach(async (property) => {
         const { data: response } = await firstValueFrom(
           this.httpService
-            .post('https://mytreehouse.vercel.app/api/properties', property)
+            .post('http://localhost:3000/api/properties', property)
             .pipe(
               catchError((error: AxiosError) => {
                 this.logger.error(error.response.data);
