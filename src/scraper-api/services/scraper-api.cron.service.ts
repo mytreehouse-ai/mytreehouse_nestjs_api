@@ -96,7 +96,7 @@ export class ScraperApiCronService {
 
                 this.logger.error(err.message);
 
-                if (err.message.includes('duplicate key value')) {
+                if (err?.message?.includes('duplicate key value')) {
                   await this.db
                     .updateTable('properties')
                     .set({ migrated_to_neon: true })
