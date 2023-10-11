@@ -47,6 +47,75 @@ export class ScraperApiCronService {
   }
 
   @Cron(CronExpression.EVERY_5_SECONDS)
+  async migrateToVercelNeon() {
+    try {
+      const properties = await this.db
+        .selectFrom('properties')
+        .select([
+          'property_id',
+          'listing_title',
+          'listing_url',
+          'property_type_id',
+          'listing_type_id',
+          'property_status_id',
+          'turnover_status_id',
+          'current_price',
+          'floor_area',
+          'lot_area',
+          'sqm',
+          'bedroom',
+          'bathroom',
+          'parking_lot',
+          'is_corner_lot',
+          'studio_type',
+          'building_name',
+          'year_built',
+          'city_id',
+          'address',
+          'is_active',
+          'is_cbd',
+          'amenities',
+          'images',
+          'description',
+          'longitude',
+          'latitude',
+          'lease_end',
+          'created_at',
+        ])
+        .where('migrated_to_neon', '=', false)
+        .orderBy('created_at', 'desc')
+        .limit(20)
+        .execute();
+
+      properties.forEach(async (property) => {
+        const { data: response } = await firstValueFrom(
+          this.httpService
+            .post('https://mytreehouse.vercel.app/api/properties', property)
+            .pipe(
+              catchError((error: AxiosError) => {
+                this.logger.error(error.response.data);
+
+                throw 'An error happened in inserting data to vercel neon!';
+              }),
+            ),
+        );
+
+        if (response) {
+          console.log(response);
+
+          await this.db
+            .updateTable('properties')
+            .set({ migrated_to_neon: true })
+            .where('property_id', '=', property.property_id)
+            .execute();
+        }
+      });
+    } catch (error) {
+      this.logger.error(error);
+    }
+  }
+
+  @Cron(CronExpression.EVERY_5_SECONDS)
   async updateSingleProperty() {
     try {
       if (this.configService.get('ALLOW_SCRAPING') === '0') {
@@ -417,6 +486,8 @@ export class ScraperApiCronService {
         urlToScrape: `https://www.myproperty.ph/land/rent/?page=${i}`,
         singlePage: false,
       });
+
+      console.log(i);
     }
   }
 
