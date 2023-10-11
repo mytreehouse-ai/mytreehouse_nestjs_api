@@ -96,6 +96,8 @@ export class ScraperApiCronService {
 
                 this.logger.error(err.message);
 
+                console.log(error.response);
+
                 if (err?.message?.includes('duplicate key value')) {
                   await this.db
                     .updateTable('properties')
