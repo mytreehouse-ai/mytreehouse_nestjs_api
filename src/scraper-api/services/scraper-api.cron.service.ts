@@ -94,9 +94,7 @@ export class ScraperApiCronService {
               catchError(async (error: AxiosError) => {
                 const err = error.response.data as { message: string };
 
-                this.logger.error(err.message);
-
-                console.log(error.response);
+                this.logger.error(error.response.statusText);
 
                 if (err?.message?.includes('duplicate key value')) {
                   await this.db
