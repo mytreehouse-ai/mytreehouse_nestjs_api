@@ -110,9 +110,7 @@ export class ScraperApiCronService {
         );
 
         if (response?.message === 'Ok') {
-          console.log(
-            Object.assign(response, { property_id: property.property_id }),
-          );
+          console.log(property);
 
           await this.db
             .updateTable('properties')
