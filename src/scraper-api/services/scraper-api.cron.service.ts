@@ -49,6 +49,10 @@ export class ScraperApiCronService {
   @Cron(CronExpression.EVERY_5_SECONDS)
   async migrateToVercelNeon() {
     try {
+      if (this.configService.get('ALLOW_SCRAPING') === '0') {
+        return;
+      }
+
       const properties = await this.db
         .selectFrom('properties')
         .select([
