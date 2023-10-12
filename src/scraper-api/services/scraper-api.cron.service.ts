@@ -82,6 +82,7 @@ export class ScraperApiCronService {
           'lease_end',
           'created_at',
         ])
+        .where('images', 'is not', null)
         .where('migrated_to_neon', '=', false)
         .limit(30)
         .execute();
@@ -89,12 +90,13 @@ export class ScraperApiCronService {
       properties.forEach(async (property) => {
         const { data: response } = await firstValueFrom(
           this.httpService
-            .post('https://mytreehouse.vercel.app/api/properties', property)
+            .post('http://mytreehouse.vercel.app/api/properties', property)
             .pipe(
               catchError(async (error: AxiosError) => {
                 const err = error.response.data as { message: string };
 
                 this.logger.error(error.response.statusText);
+                console.log(err);
 
                 if (err?.message?.includes('duplicate key value')) {
                   await this.db
