@@ -107,8 +107,6 @@ export class ScraperApiCronService {
         .execute();
 
       properties.forEach(async (property) => {
-        console.log(property);
-
         const { data: response } = await firstValueFrom(
           this.httpService
             .post('https://mytreehouse.vercel.app/api/properties', property)
@@ -133,14 +131,14 @@ export class ScraperApiCronService {
         );
 
         if (response?.message === 'Ok') {
-          console.log(property);
-
           await this.db
             .updateTable('properties')
             .set({ migrated_to_neon: true })
             .where('property_id', '=', property.property_id)
             .execute();
         }
+
+        console.log('All goods');
       });
     } catch (error) {
       this.logger.error(error);
