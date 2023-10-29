@@ -51,6 +51,9 @@ export class ScraperApiCronService {
     try {
       const properties = await this.db
         .selectFrom('properties')
+        .innerJoin('property_types', 'property_type_id', 'property_type_id')
+        .innerJoin('listing_types', 'listing_type_id', 'listing_type_id')
+        .innerJoin('cities', 'city_id', 'city_id')
         .select([
           'property_id',
           'listing_title',
@@ -80,10 +83,19 @@ export class ScraperApiCronService {
           'longitude',
           'latitude',
           'lease_end',
+          'property_types.name as ts_query_property_type_name',
+          'listing_types.name as ts_query_listing_type_name',
+          'cities.name as ts_query_city_name',
           'created_at',
         ])
         .where('images', 'is not', null)
         .where('migrated_to_neon', '=', false)
+        .where('listing_title', 'is not', null)
+        .where('property_type_id', 'is not', null)
+        .where('listing_type_id', 'is not', null)
+        .where('property_status_id', 'is not', null)
+        .where('city_id', 'is not', null)
+        .where('description', 'is not', null)
         .limit(30)
         .execute();
 
