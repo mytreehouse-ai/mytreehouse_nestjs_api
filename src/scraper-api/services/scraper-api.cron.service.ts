@@ -90,7 +90,7 @@ export class ScraperApiCronService {
       properties.forEach(async (property) => {
         const { data: response } = await firstValueFrom(
           this.httpService
-            .post('http://mytreehouse.vercel.app/api/properties', property)
+            .post('https://mytreehouse.vercel.app/api/properties', property)
             .pipe(
               catchError(async (error: AxiosError) => {
                 const err = error.response.data as { message: string };
