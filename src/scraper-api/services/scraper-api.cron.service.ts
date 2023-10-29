@@ -240,7 +240,7 @@ export class ScraperApiCronService {
     }
   }
 
-  @Cron(CronExpression.EVERY_10_MINUTES)
+  @Cron(CronExpression.EVERY_WEEK)
   async lamudiParanuqueBfHomes() {
     for (let i = 1; i <= 100; i++) {
       await this.asyncJob({
@@ -252,7 +252,7 @@ export class ScraperApiCronService {
     this.logger.log('Lamudi Paranuque Bf Homes.');
   }
 
-  @Cron(CronExpression.EVERY_10_MINUTES)
+  @Cron(CronExpression.EVERY_WEEK)
   async lamudiCondominiumForSale() {
     if (this.configService.get('ALLOW_SCRAPING') === '0') {
       return;
@@ -266,7 +266,7 @@ export class ScraperApiCronService {
     }
   }
 
-  @Cron(CronExpression.EVERY_10_MINUTES)
+  @Cron(CronExpression.EVERY_WEEK)
   async lamudiCondominiumForRent() {
     if (this.configService.get('ALLOW_SCRAPING') === '0') {
       return;
@@ -280,7 +280,7 @@ export class ScraperApiCronService {
     }
   }
 
-  @Cron(CronExpression.EVERY_10_MINUTES)
+  @Cron(CronExpression.EVERY_WEEK)
   async lamudiHouseForSale() {
     if (this.configService.get('ALLOW_SCRAPING') === '0') {
       return;
@@ -294,7 +294,7 @@ export class ScraperApiCronService {
     }
   }
 
-  @Cron(CronExpression.EVERY_10_MINUTES)
+  @Cron(CronExpression.EVERY_WEEK)
   async lamudiHouseForRent() {
     if (this.configService.get('ALLOW_SCRAPING') === '0') {
       return;
@@ -308,7 +308,7 @@ export class ScraperApiCronService {
     }
   }
 
-  @Cron(CronExpression.EVERY_10_MINUTES)
+  @Cron(CronExpression.EVERY_WEEK)
   async lamudiApartmentForSale() {
     if (this.configService.get('ALLOW_SCRAPING') === '0') {
       return;
@@ -322,7 +322,7 @@ export class ScraperApiCronService {
     }
   }
 
-  @Cron(CronExpression.EVERY_10_MINUTES)
+  @Cron(CronExpression.EVERY_WEEK)
   async lamudiApartmentForRent() {
     if (this.configService.get('ALLOW_SCRAPING') === '0') {
       return;
@@ -336,7 +336,7 @@ export class ScraperApiCronService {
     }
   }
 
-  @Cron(CronExpression.EVERY_10_MINUTES)
+  @Cron(CronExpression.EVERY_WEEK)
   async lamudiLotForSale() {
     if (this.configService.get('ALLOW_SCRAPING') === '0') {
       return;
@@ -350,7 +350,7 @@ export class ScraperApiCronService {
     }
   }
 
-  @Cron(CronExpression.EVERY_10_MINUTES)
+  @Cron(CronExpression.EVERY_WEEK)
   async lamudiLotForRent() {
     if (this.configService.get('ALLOW_SCRAPING') === '0') {
       return;
@@ -364,7 +364,7 @@ export class ScraperApiCronService {
     }
   }
 
-  @Cron(CronExpression.EVERY_10_MINUTES)
+  @Cron(CronExpression.EVERY_WEEK)
   async lamudiWarehouseForSale() {
     if (this.configService.get('ALLOW_SCRAPING') === '0') {
       return;
@@ -378,7 +378,7 @@ export class ScraperApiCronService {
     }
   }
 
-  @Cron(CronExpression.EVERY_10_MINUTES)
+  @Cron(CronExpression.EVERY_WEEK)
   async lamudiWarehouseForRent() {
     if (this.configService.get('ALLOW_SCRAPING') === '0') {
       return;
@@ -392,7 +392,7 @@ export class ScraperApiCronService {
     }
   }
 
-  @Cron(CronExpression.EVERY_10_MINUTES)
+  @Cron(CronExpression.EVERY_WEEK)
   async mypropertyCondominiumForSale() {
     if (this.configService.get('ALLOW_SCRAPING') === '0') {
       return;
@@ -406,7 +406,7 @@ export class ScraperApiCronService {
     }
   }
 
-  @Cron(CronExpression.EVERY_10_MINUTES)
+  @Cron(CronExpression.EVERY_WEEK)
   async mypropertyCondominiumForRent() {
     if (this.configService.get('ALLOW_SCRAPING') === '0') {
       return;
@@ -420,7 +420,7 @@ export class ScraperApiCronService {
     }
   }
 
-  @Cron(CronExpression.EVERY_10_MINUTES)
+  @Cron(CronExpression.EVERY_WEEK)
   async mypropertyHouseForSale() {
     if (this.configService.get('ALLOW_SCRAPING') === '0') {
       return;
@@ -434,7 +434,7 @@ export class ScraperApiCronService {
     }
   }
 
-  @Cron(CronExpression.EVERY_10_MINUTES)
+  @Cron(CronExpression.EVERY_WEEK)
   async mypropertyHouseForRent() {
     if (this.configService.get('ALLOW_SCRAPING') === '0') {
       return;
@@ -448,7 +448,7 @@ export class ScraperApiCronService {
     }
   }
 
-  @Cron(CronExpression.EVERY_10_MINUTES)
+  @Cron(CronExpression.EVERY_WEEK)
   async mypropertyApartmentForSale() {
     if (this.configService.get('ALLOW_SCRAPING') === '0') {
       return;
@@ -462,7 +462,7 @@ export class ScraperApiCronService {
     }
   }
 
-  @Cron(CronExpression.EVERY_10_MINUTES)
+  @Cron(CronExpression.EVERY_WEEK)
   async mypropertyApartmentForRent() {
     if (this.configService.get('ALLOW_SCRAPING') === '0') {
       return;
@@ -476,7 +476,7 @@ export class ScraperApiCronService {
     }
   }
 
-  @Cron(CronExpression.EVERY_10_MINUTES)
+  @Cron(CronExpression.EVERY_WEEK)
   async mypropertyLandForSale() {
     if (this.configService.get('ALLOW_SCRAPING') === '0') {
       return;
@@ -490,7 +490,7 @@ export class ScraperApiCronService {
     }
   }
 
-  @Cron(CronExpression.EVERY_10_MINUTES)
+  @Cron(CronExpression.EVERY_WEEK)
   async mypropertyLandForRent() {
     if (this.configService.get('ALLOW_SCRAPING') === '0') {
       return;
@@ -506,7 +506,7 @@ export class ScraperApiCronService {
     }
   }
 
-  @Cron(CronExpression.EVERY_10_MINUTES)
+  @Cron(CronExpression.EVERY_WEEK)
   async mypropertyPhWarehouseForSale() {
     if (this.configService.get('ALLOW_SCRAPING') === '0') {
       return;
@@ -520,7 +520,7 @@ export class ScraperApiCronService {
     }
   }
 
-  @Cron(CronExpression.EVERY_10_MINUTES)
+  @Cron(CronExpression.EVERY_WEEK)
   async mypropertyPhWarehouseForRent() {
     if (this.configService.get('ALLOW_SCRAPING') === '0') {
       return;
