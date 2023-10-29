@@ -107,6 +107,8 @@ export class ScraperApiCronService {
         .execute();
 
       properties.forEach(async (property) => {
+        console.log(property);
+
         const { data: response } = await firstValueFrom(
           this.httpService
             .post('https://mytreehouse.vercel.app/api/properties', property)
