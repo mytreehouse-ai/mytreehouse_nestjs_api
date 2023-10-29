@@ -84,6 +84,12 @@ export class ScraperApiCronService {
         ])
         .where('images', 'is not', null)
         .where('migrated_to_neon', '=', false)
+        .where('listing_title', 'is not', null)
+        .where('property_type_id', 'is not', null)
+        .where('listing_type_id', 'is not', null)
+        .where('property_status_id', 'is not', null)
+        .where('city_id', 'is not', null)
+        .where('description', 'is not', null)
         .limit(30)
         .execute();
 
