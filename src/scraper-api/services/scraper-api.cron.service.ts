@@ -51,17 +51,25 @@ export class ScraperApiCronService {
     try {
       const properties = await this.db
         .selectFrom('properties')
-        .innerJoin('property_types', 'property_type_id', 'property_type_id')
-        .innerJoin('listing_types', 'listing_type_id', 'listing_type_id')
-        .innerJoin('cities', 'city_id', 'city_id')
+        .innerJoin(
+          'property_types',
+          'property_types.property_type_id',
+          'properties.property_type_id',
+        )
+        .innerJoin(
+          'listing_types',
+          'listing_types.listing_type_id',
+          'properties.listing_type_id',
+        )
+        .innerJoin('cities', 'cities.city_id', 'properties.city_id')
         .select([
           'property_id',
           'listing_title',
           'listing_url',
-          'property_type_id',
-          'listing_type_id',
-          'property_status_id',
-          'turnover_status_id',
+          'properties.property_type_id',
+          'properties.listing_type_id',
+          'properties.property_status_id',
+          'properties.turnover_status_id',
           'current_price',
           'floor_area',
           'lot_area',
@@ -73,7 +81,7 @@ export class ScraperApiCronService {
           'studio_type',
           'building_name',
           'year_built',
-          'city_id',
+          'properties.city_id',
           'address',
           'is_active',
           'is_cbd',
@@ -91,10 +99,9 @@ export class ScraperApiCronService {
         .where('images', 'is not', null)
         .where('migrated_to_neon', '=', false)
         .where('listing_title', 'is not', null)
-        .where('property_type_id', 'is not', null)
-        .where('listing_type_id', 'is not', null)
-        .where('property_status_id', 'is not', null)
-        .where('city_id', 'is not', null)
+        .where('properties.property_type_id', 'is not', null)
+        .where('properties.listing_type_id', 'is not', null)
+        .where('properties.city_id', 'is not', null)
         .where('description', 'is not', null)
         .limit(30)
         .execute();
